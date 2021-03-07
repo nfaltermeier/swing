@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using tainicom.Aether.Physics2D.Dynamics;
 
 namespace Swing.Engine.Components
 {
@@ -10,15 +11,13 @@ namespace Swing.Engine.Components
     {
         public float Acceleration { get; set; } = 300;
 
-        private Rigidbody2D rigidbody;
+        private Body body;
 
         public PlayerController(Actor attached) : base(attached) { }
 
         internal override void Start()
         {
             base.Start();
-
-            rigidbody = GetComponent<Rigidbody2D>();
         }
 
         internal override void Update()
@@ -28,20 +27,19 @@ namespace Swing.Engine.Components
             Vector2 instantVel = InputManager.Direction * Acceleration * Time.DeltaTime;
 
             // Make stopping faster
-            if (Vector2.Dot(Vector2.Normalize(instantVel), Vector2.Normalize(rigidbody.Velocity)) < 0.25f)
+            if (Vector2.Dot(Vector2.Normalize(instantVel), Vector2.Normalize(body.LinearVelocity)) < 0.25f)
             {
                 instantVel *= 2f;
             }
 
-            rigidbody.Velocity += instantVel;
-            rigidbody.IsDragEnabled = instantVel.LengthSquared() < 1f;
+            body.LinearVelocity += instantVel;
         }
 
         public override void FinalDestroy()
         {
             base.FinalDestroy();
 
-            rigidbody = null;
+            body = null;
         }
     }
 }

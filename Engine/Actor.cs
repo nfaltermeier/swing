@@ -10,7 +10,7 @@ namespace Swing.Engine
 {
     public abstract class Actor : IDestroyable
     {
-        public Vector2 Position { get; set; }
+        public virtual Vector2 Position { get; set; }
         public bool IsDestroyed { get; private set; }
 
         private List<Component> components;
@@ -181,11 +181,6 @@ namespace Swing.Engine
         }
 
         protected virtual void FixedUpdate()
-        {
-
-        }
-
-        internal virtual void OnTriggerEnter(RectangleCollider collider, Actor other, RectangleCollider otherCollider)
         {
 
         }

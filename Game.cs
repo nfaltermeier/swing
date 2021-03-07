@@ -6,6 +6,7 @@ using Swing.Engine.Components;
 using System;
 using System.Linq;
 using Microsoft.Xna.Framework.Audio;
+using tainicom.Aether.Physics2D.Dynamics;
 
 namespace Swing
 {
@@ -18,11 +19,11 @@ namespace Swing
         public int DisplayHeight => _graphics.PreferredBackBufferHeight;
         public SpriteFont DebugFont { get; private set; }
         public Texture2D DebugPixel { get; private set; }
+        public World World { get; private set; }
 
         private GraphicsDeviceManager _graphics;
         private List<Actor> actors;
         private List<IDestroyable> toDestroy;
-        private List<RectangleCollider> colliders;
         private bool contentLoaded = false;
         private float timeSinceFixedUpdate = 0;
         private FrameCounter _frameCounter = new FrameCounter();
@@ -36,20 +37,19 @@ namespace Swing
             //Window.IsBorderless = true;
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
-            Window.Title = "Bannanarang";
+            Window.Title = "Swing";
 
             Instance = this;
         }
 
         protected override void Initialize()
         {
+            World = new World(Vector2.UnitY * -9);
+
             actors = new List<Actor>();
             toDestroy = new List<IDestroyable>();
-            colliders = new List<RectangleCollider>();
 
             //SoundEffect.MasterVolume = 0;
-
-            
 
             base.Initialize();
         }
@@ -87,7 +87,7 @@ namespace Swing
                         actor.EngineFixedUpdate();
                 }
 
-                CollisionHelper.CheckCollision(colliders);
+                World.Step(Time.DeltaTime);
             }
             Time.IsInFixedUpdate = false;
 
@@ -108,10 +108,6 @@ namespace Swing
                 if (d is Actor a)
                 {
                     actors.Remove(a);
-                } 
-                else if (d is RectangleCollider rc)
-                {
-                    colliders.Remove(rc);
                 }
             }
 
@@ -154,11 +150,6 @@ namespace Swing
 
             if (!d.IsDestroyed)
                 d.Destroy();
-        }
-
-        public void AddCollider(RectangleCollider collider)
-        {
-            colliders.Add(collider);
         }
 
         public Rectangle GetPlayBounds(int inset)
