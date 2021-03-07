@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Swing.Actors;
 using Swing.Engine.StateManagement;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,11 @@ namespace Swing.Screens
 {
     class MainGameScreen : GameScreen
     {
+        public MainGameScreen()
+        {
+            Instantiate(new Player(this, Vector2.Zero));
+        }
+
         public override void Draw(GameTime gameTime)
         {
             base.Draw(gameTime);

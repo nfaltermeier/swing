@@ -38,7 +38,12 @@ namespace Swing.Engine
             }
         }
 
-        public BodiedActor(GameScreen screen) : base(screen)
+        public BodiedActor(GameScreen screen) : this(screen, Vector2.Zero)
+        {
+
+        }
+
+        public BodiedActor(GameScreen screen, Vector2 position) : base(screen, position)
         {
 
         }

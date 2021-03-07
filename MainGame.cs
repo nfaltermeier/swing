@@ -40,7 +40,7 @@ namespace Swing
 
         protected override void Initialize()
         {
-            World = new World(Vector2.UnitY * -9);
+            World = new World(Vector2.UnitY * -90);
 
             screenManager = new ScreenManager(this);
             Components.Add(screenManager);

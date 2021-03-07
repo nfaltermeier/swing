@@ -31,7 +31,7 @@ namespace Swing.Engine
         #region Render methods
         public void RenderSprite(Vector2 position, Texture2D sprite)
         {
-            MainGame.Instance.SpriteBatch.Draw(sprite, position.WorldToScreenspace(), null, Color.White, 0,
+            Screen.ScreenManager.SpriteBatch.Draw(sprite, position.WorldToScreenspace(), null, Color.White, 0,
                 new Vector2(sprite.Width / 2, sprite.Height / 2), 1, SpriteEffects.None, 0);
         }
 
@@ -41,13 +41,13 @@ namespace Swing.Engine
             destination.X = (int)offset.X;
             destination.Y = (int)offset.Y;
 
-            MainGame.Instance.SpriteBatch.Draw(sprite, destination, null, color, 0f, Vector2.Zero, SpriteEffects.None, depth);
+            Screen.ScreenManager.SpriteBatch.Draw(sprite, destination, null, color, 0f, Vector2.Zero, SpriteEffects.None, depth);
         }
 
         public void RenderSpriteFromSheet(Vector2 position, Texture2D sprite, int spriteWidth, int spriteHeight, int cellX, int cellY, int frame)
         {
             Rectangle r = new Rectangle((cellX + frame) * spriteWidth, cellY * spriteHeight, spriteWidth, spriteHeight);
-            MainGame.Instance.SpriteBatch.Draw(sprite, position.WorldToScreenspace(), r, Color.White, 0,
+            Screen.ScreenManager.SpriteBatch.Draw(sprite, position.WorldToScreenspace(), r, Color.White, 0,
                 new Vector2(spriteWidth / 2, spriteHeight / 2), 1, SpriteEffects.None, 0);
         }
 
@@ -58,7 +58,7 @@ namespace Swing.Engine
 
         public void RenderTextScreenspace(Vector2 position, string text, SpriteFont font, Color color)
         {
-            MainGame.Instance.SpriteBatch.DrawString(font, text, position, color);
+            Screen.ScreenManager.SpriteBatch.DrawString(font, text, position, color);
         }
 
         public void RenderTextWorldspace(Vector2 position, string text, SpriteFont font)

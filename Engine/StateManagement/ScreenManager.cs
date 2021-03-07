@@ -96,14 +96,22 @@ namespace Swing.Engine.StateManagement
             {
                 timeSinceFixedUpdate -= Time.FixedDeltaTime;
 
+                _tmpScreensList.Clear();
+                _tmpScreensList.AddRange(_screens);
+
+                while (_tmpScreensList.Count > 0)
+                {
+                    // Pop the topmost screen 
+                    var screen = _tmpScreensList[_tmpScreensList.Count - 1];
+                    _tmpScreensList.RemoveAt(_tmpScreensList.Count - 1);
+
+                    screen.FixedUpdate();
+                }
 
                 MainGame.Instance.World.Step(Time.DeltaTime);
             }
             Time.IsInFixedUpdate = false;
 
-            
-
-            
 
             // Make a copy of the screen list, to avoid confusion if 
             // the process of updating a screen adds or removes others

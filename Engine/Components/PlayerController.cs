@@ -11,9 +11,12 @@ namespace Swing.Engine.Components
     {
         public float Acceleration { get; set; } = 300;
 
-        private Body body;
+        BodiedActor bAttached;
 
-        public PlayerController(Actor attached) : base(attached) { }
+        public PlayerController(BodiedActor attached) : base(attached)
+        {
+            bAttached = attached;
+        }
 
         internal override void Start()
         {
@@ -27,19 +30,21 @@ namespace Swing.Engine.Components
             Vector2 instantVel = InputManager.Direction * Acceleration * Time.DeltaTime;
 
             // Make stopping faster
-            if (Vector2.Dot(Vector2.Normalize(instantVel), Vector2.Normalize(body.LinearVelocity)) < 0.25f)
+            if (Vector2.Dot(Vector2.Normalize(instantVel), Vector2.Normalize(bAttached.Body.LinearVelocity)) < 0.25f)
             {
                 instantVel *= 2f;
             }
 
-            body.LinearVelocity += instantVel;
+            Debug.Log($"Velocity: {bAttached.Body.LinearVelocity}, instantVel: {instantVel}");
+
+            bAttached.Body.LinearVelocity += instantVel;
         }
 
         public override void FinalDestroy()
         {
             base.FinalDestroy();
 
-            body = null;
+            bAttached = null;
         }
     }
 }
