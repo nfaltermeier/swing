@@ -33,7 +33,7 @@ namespace Swing.Engine
                 return;
 
             IsDestroyed = true;
-            Game.Instance.Destroy(this);
+            Attached.Screen.Destroy(this);
         }
 
         #region Virtual methods

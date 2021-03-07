@@ -12,7 +12,7 @@ namespace Swing.Engine
 
         public static bool IsOnScreen(Vector2 point)
         {
-            return point.X >= 0 && point.X <= Game.Instance.DisplayWidth && point.Y >= 0 && point.Y <= Game.Instance.DisplayHeight;
+            return point.X >= 0 && point.X <= MainGame.Instance.DisplayWidth && point.Y >= 0 && point.Y <= MainGame.Instance.DisplayHeight;
         }
     }
 }

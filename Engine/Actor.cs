@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Swing.Engine.Components;
+using Swing.Engine.StateManagement;
 
 namespace Swing.Engine
 {
@@ -12,14 +13,16 @@ namespace Swing.Engine
     {
         public virtual Vector2 Position { get; set; }
         public bool IsDestroyed { get; private set; }
+        public GameScreen Screen { get; private set; }
 
         private List<Component> components;
         private bool contentLoaded = false;
 
-        public Actor() : this(Vector2.Zero) { }
+        public Actor(GameScreen screen) : this(screen, Vector2.Zero) { }
 
-        public Actor(Vector2 position)
+        public Actor(GameScreen screen, Vector2 position)
         {
+            this.Screen = screen;
             Position = position;
             components = new List<Component>();
             IsDestroyed = false;
@@ -28,7 +31,7 @@ namespace Swing.Engine
         #region Render methods
         public void RenderSprite(Vector2 position, Texture2D sprite)
         {
-            Game.Instance.SpriteBatch.Draw(sprite, position.WorldToScreenspace(), null, Color.White, 0,
+            MainGame.Instance.SpriteBatch.Draw(sprite, position.WorldToScreenspace(), null, Color.White, 0,
                 new Vector2(sprite.Width / 2, sprite.Height / 2), 1, SpriteEffects.None, 0);
         }
 
@@ -38,13 +41,13 @@ namespace Swing.Engine
             destination.X = (int)offset.X;
             destination.Y = (int)offset.Y;
 
-            Game.Instance.SpriteBatch.Draw(sprite, destination, null, color, 0f, Vector2.Zero, SpriteEffects.None, depth);
+            MainGame.Instance.SpriteBatch.Draw(sprite, destination, null, color, 0f, Vector2.Zero, SpriteEffects.None, depth);
         }
 
         public void RenderSpriteFromSheet(Vector2 position, Texture2D sprite, int spriteWidth, int spriteHeight, int cellX, int cellY, int frame)
         {
             Rectangle r = new Rectangle((cellX + frame) * spriteWidth, cellY * spriteHeight, spriteWidth, spriteHeight);
-            Game.Instance.SpriteBatch.Draw(sprite, position.WorldToScreenspace(), r, Color.White, 0,
+            MainGame.Instance.SpriteBatch.Draw(sprite, position.WorldToScreenspace(), r, Color.White, 0,
                 new Vector2(spriteWidth / 2, spriteHeight / 2), 1, SpriteEffects.None, 0);
         }
 
@@ -55,7 +58,7 @@ namespace Swing.Engine
 
         public void RenderTextScreenspace(Vector2 position, string text, SpriteFont font, Color color)
         {
-            Game.Instance.SpriteBatch.DrawString(font, text, position, color);
+            MainGame.Instance.SpriteBatch.DrawString(font, text, position, color);
         }
 
         public void RenderTextWorldspace(Vector2 position, string text, SpriteFont font)
@@ -65,13 +68,13 @@ namespace Swing.Engine
 
         public void RenderDebugTextScreenspace(Vector2 position, string text)
         {
-            RenderTextScreenspace(position, text, Game.Instance.DebugFont);
+            RenderTextScreenspace(position, text, Screen.ScreenManager.DebugFont);
         }
         #endregion
 
         public Actor Instantiate(Actor a)
         {
-            return Game.Instance.Instantiate(a);
+            return Screen.Instantiate(a);
         }
 
         public T GetComponent<T>() where T : Component
@@ -104,7 +107,7 @@ namespace Swing.Engine
             component.Start();
 
             if (contentLoaded)
-                component.LoadContent(Game.Instance.Content);
+                component.LoadContent(MainGame.Instance.Content);
 
             return component;
         }
@@ -115,7 +118,7 @@ namespace Swing.Engine
                 return;
 
             IsDestroyed = true;
-            Game.Instance.Destroy(this);
+            Screen.Destroy(this);
 
             foreach (Component c in components)
             {

@@ -4,4 +4,6 @@ Content/Bangers/Bangers-Regular.ttf - Bangers font created by Vernon Adams, rele
 
 Engine/FrameCounter.cs - FrameCounter code by craftworkgames from https://stackoverflow.com/a/20679895/5863057. Modified to have its own draw method. Licensed under CC BY-SA 3.0 https://creativecommons.org/licenses/by-sa/3.0/legalcode.
 
+Engine/StateManagement - State Management code is by Nathan Bean and is modified by me.
+
 All other assets are made by me.

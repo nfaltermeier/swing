@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Swing.Engine.StateManagement;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -37,13 +38,18 @@ namespace Swing.Engine
             }
         }
 
+        public BodiedActor(GameScreen screen) : base(screen)
+        {
+
+        }
+
         public override void FinalDestroy()
         {
             base.FinalDestroy();
 
             if (Body != null)
             {
-                Game.Instance.World.Remove(Body);
+                MainGame.Instance.World.Remove(Body);
                 Body = null;
             }
         }
