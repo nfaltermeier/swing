@@ -16,7 +16,7 @@ namespace Swing
         /// The screenspace position of the mouse cursor
         /// </summary>
         public static Vector2 MouseLocation { get; private set; }
-        public static bool UseTool { get; private set; }
+        public static bool MouseClicked { get; private set; }
 
         private static KeyboardState currentKeyboardState;
         private static GamePadState currentGamePadState;
@@ -87,7 +87,7 @@ namespace Swing
             #endregion
 
             #region UseTool
-            UseTool = currentMouseState.LeftButton == ButtonState.Released && previousMouseState.LeftButton == ButtonState.Pressed;
+            MouseClicked = currentMouseState.LeftButton == ButtonState.Released && previousMouseState.LeftButton == ButtonState.Pressed;
             #endregion
         }
     }

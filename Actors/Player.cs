@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using tainicom.Aether.Physics2D.Dynamics;
+using tainicom.Aether.Physics2D.Dynamics.Contacts;
 
 namespace Swing.Actors
 {
@@ -15,12 +16,22 @@ namespace Swing.Actors
     {
         private Texture2D sprite;
 
-        public Player(GameScreen screen, Vector2 position) : base(screen, position)
+        public Player(Vector2 position) : base(position)
         {
             Body = MainGame.Instance.World.CreateRectangle(64, 64, 1, bodyType: BodyType.Dynamic);
+            Body.FixedRotation = true;
+            Body.OnCollision += Body_OnCollision;
         }
 
-        internal override void Start()
+        private bool Body_OnCollision(Fixture sender, Fixture other, Contact contact)
+        {
+            if (other.Tag is ColliderTags tag && tag == ColliderTags.Spike)
+                Destroy();
+
+            return true;
+        }
+
+        protected override void Start()
         {
             base.Start();
 

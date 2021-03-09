@@ -14,10 +14,9 @@ namespace Swing.Engine.StateManagement
     {
         private readonly List<GameScreen> _screens = new List<GameScreen>();
         private readonly List<GameScreen> _tmpScreensList = new List<GameScreen>();
+        private readonly List<GameScreen> screensToDestroy = new List<GameScreen>();
 
         private readonly InputState _input = new InputState();
-
-        private bool _isInitialized;
 
         /// <summary>
         /// A SpriteBatch shared by all GameScreens
@@ -30,6 +29,7 @@ namespace Swing.Engine.StateManagement
 
         private bool contentLoaded = false;
         private float timeSinceFixedUpdate = 0;
+        private FrameCounter _frameCounter = new FrameCounter();
 
         /// <summary>
         /// Constructs a new ScreenManager
@@ -46,7 +46,6 @@ namespace Swing.Engine.StateManagement
         public override void Initialize()
         {
             base.Initialize();
-            _isInitialized = true;
         }
 
         /// <summary>
@@ -63,7 +62,6 @@ namespace Swing.Engine.StateManagement
             // Tell each of the screens to load thier content 
             foreach (var screen in _screens)
             {
-                screen.Activate();
                 screen.LoadContent(Content);
             }
         }
@@ -105,7 +103,8 @@ namespace Swing.Engine.StateManagement
                     var screen = _tmpScreensList[_tmpScreensList.Count - 1];
                     _tmpScreensList.RemoveAt(_tmpScreensList.Count - 1);
 
-                    screen.FixedUpdate();
+                    if (screen.Active)
+                        screen.FixedUpdate();
                 }
 
                 MainGame.Instance.World.Step(Time.DeltaTime);
@@ -127,21 +126,33 @@ namespace Swing.Engine.StateManagement
                 var screen = _tmpScreensList[_tmpScreensList.Count - 1];
                 _tmpScreensList.RemoveAt(_tmpScreensList.Count - 1);
 
-                screen.Update(gameTime, otherScreenHasFocus, coveredByOtherScreen);
+                screen.UpdateTransitions(otherScreenHasFocus, coveredByOtherScreen);
 
-                if (screen.ScreenState == ScreenState.TransitionOn || screen.ScreenState == ScreenState.Active)
+                if (screen.Active)
                 {
-                    // if this is the first active screen, let it handle input 
-                    if (!otherScreenHasFocus)
-                    {
-                        screen.HandleInput(gameTime, _input);
-                        otherScreenHasFocus = true;
-                    }
+                    screen.Update();
 
-                    // if this is an active non-popup, all subsequent 
-                    // screens are covered 
-                    if (!screen.IsPopup) coveredByOtherScreen = true;
+                    if (screen.ScreenState == ScreenState.TransitionOn || screen.ScreenState == ScreenState.Active)
+                    {
+                        // if this is the first active screen, let it handle input 
+                        if (!otherScreenHasFocus)
+                        {
+                            screen.HandleInput(_input);
+                            otherScreenHasFocus = true;
+                        }
+
+                        // if this is an active non-popup, all subsequent 
+                        // screens are covered 
+                        if (!screen.IsPopup) coveredByOtherScreen = true;
+                    }
                 }
+            }
+
+            while (screensToDestroy.Count > 0)
+            {
+                var screen = screensToDestroy[0];
+                screensToDestroy.RemoveAt(0);
+                screen.FinalDestory();
             }
         }
 
@@ -155,7 +166,16 @@ namespace Swing.Engine.StateManagement
             {
                 if (screen.ScreenState == ScreenState.Hidden) continue;
 
-                screen.Draw(gameTime);
+                screen.Draw();
+            }
+
+            SpriteBatch.Begin(samplerState: SamplerState.PointClamp);
+            _frameCounter.Draw(gameTime, SpriteBatch, DebugFont);
+            SpriteBatch.End();
+
+            if (Debug.DISPLAY_COLLIDERS)
+            {
+                MainGame.Instance.DebugView.RenderDebugData(MainGame.Instance.ProjectionMatrix, MainGame.Instance.ViewMatrix);
             }
         }
 
@@ -169,16 +189,22 @@ namespace Swing.Engine.StateManagement
             screen.ScreenManager = this;
             screen.IsExiting = false;
 
-            // If we have a graphics device, tell the screen to load content
-            if (_isInitialized) screen.Activate();
+            screen.Active = true;
+
+            if (contentLoaded)
+                screen.LoadContent(Content);
 
             _screens.Add(screen);
         }
 
         public void RemoveScreen(GameScreen screen)
         {
-            // If we have a graphics device, tell the screen to unload its content 
-            if (_isInitialized) screen.Unload();
+            if (screen.IsDestroyed)
+                return;
+
+            screen.Active = false;
+            screen.Unload();
+            screensToDestroy.Add(screen);
 
             _screens.Remove(screen);
             _tmpScreensList.Remove(screen);
@@ -191,6 +217,11 @@ namespace Swing.Engine.StateManagement
         public GameScreen[] GetScreens()
         {
             return _screens.ToArray();
+        }
+
+        public T GetScreen<T>() where T : GameScreen
+        {
+            return _screens.Find(a => a is T) as T;
         }
 
         // Helper draws a translucent black fullscreen sprite, used for fading

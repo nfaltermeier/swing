@@ -24,5 +24,23 @@ namespace Swing.Engine
             v = Vector2.Normalize(v);
             return v *= length;
         }
+
+        public static Rectangle WorldToScreenspace(this Rectangle r)
+        {
+            Vector2 offset = new Vector2(r.X, r.Y).WorldToScreenspace();
+            r.X = (int)offset.X;
+            r.Y = (int)offset.Y;
+
+            return r;
+        }
+
+        public static Rectangle ScreenToWorldspace(this Rectangle r)
+        {
+            Vector2 offset = new Vector2(r.X, r.Y).ScreenToWorldspace();
+            r.X = (int)offset.X;
+            r.Y = (int)offset.Y;
+
+            return r;
+        }
     }
 }

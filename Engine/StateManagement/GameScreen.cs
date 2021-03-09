@@ -92,6 +92,21 @@ namespace Swing.Engine.StateManagement
         /// </remarks>
         public PlayerIndex? ControllingPlayer { protected get; set; }
 
+        private bool _active = false;
+        public bool Active {
+            get => _active;
+            set
+            {
+                _active = value;
+                if (_active)
+                    Activate();
+                else
+                    Deactivate();
+            }
+        }
+
+        public bool IsDestroyed { get; private set; }
+
         private List<Actor> actors;
         private List<IDestroyable> toDestroy;
         private bool contentLoaded = false;
@@ -106,7 +121,7 @@ namespace Swing.Engine.StateManagement
         /// Activates the screen.  Called when the screen is added to the screen manager 
         /// or the game returns from being paused.
         /// </summary>
-        public virtual void Activate() { }
+        protected virtual void Activate() { }
 
         public virtual void LoadContent(ContentManager content)
         {
@@ -119,18 +134,38 @@ namespace Swing.Engine.StateManagement
         /// Deactivates the screen.  Called when the screen is removed from the screen manager 
         /// or when the game is paused.
         /// </summary>
-        public virtual void Deactivate() { }
+        protected virtual void Deactivate() { }
 
         /// <summary>
         /// Unloads content for the screen. Called when the screen is removed from the screen manager
+        /// Should only be called by the screen manager.
         /// </summary>
-        public virtual void Unload() { }
+        internal virtual void Unload() {
+            if (IsDestroyed)
+                return;
+
+            IsDestroyed = true;
+            foreach (Actor a in actors)
+                a.Destroy();
+        }
+
+        public virtual void Update()
+        {
+            for (int i = 0; i < actors.Count; i++)
+            {
+                Actor actor = actors[i];
+                if (!actor.IsDestroyed)
+                    actor.EngineUpdate();
+            }
+
+            FinalDestroyThings();
+        }
 
         /// <summary>
         /// Updates the screen. Unlike HandleInput, this method is called regardless of whether the screen
         /// is active, hidden, or in the middle of a transition.
         /// </summary>
-        public virtual void Update(GameTime gameTime, bool otherScreenHasFocus, bool coveredByOtherScreen)
+        public virtual void UpdateTransitions(bool otherScreenHasFocus, bool coveredByOtherScreen)
         {
             _otherScreenHasFocus = otherScreenHasFocus;
 
@@ -139,42 +174,22 @@ namespace Swing.Engine.StateManagement
                 // If the screen is going away forever, it should transition off
                 ScreenState = ScreenState.TransitionOff;
 
-                if (!UpdateTransitionPosition(gameTime, TransitionOffTime, 1))
+                if (!UpdateTransitionPosition(TransitionOffTime, 1))
                     ScreenManager.RemoveScreen(this);
             }
             else if (coveredByOtherScreen)
             {
                 // if the screen is covered by another, it should transition off
-                ScreenState = UpdateTransitionPosition(gameTime, TransitionOffTime, 1)
+                ScreenState = UpdateTransitionPosition(TransitionOffTime, 1)
                     ? ScreenState.TransitionOff
                     : ScreenState.Hidden;
             }
             else
             {
                 // Otherwise the screen should transition on and become active.
-                ScreenState = UpdateTransitionPosition(gameTime, TransitionOnTime, -1)
+                ScreenState = UpdateTransitionPosition(TransitionOnTime, -1)
                     ? ScreenState.TransitionOn
                     : ScreenState.Active;
-            }
-
-            for (int i = 0; i < actors.Count; i++)
-            {
-                Actor actor = actors[i];
-                if (!actor.IsDestroyed)
-                    actor.EngineUpdate();
-            }
-
-            while (toDestroy.Count > 0)
-            {
-                IDestroyable d = toDestroy[0];
-
-                d.FinalDestroy();
-
-                toDestroy.RemoveAt(0);
-                if (d is Actor a)
-                {
-                    actors.Remove(a);
-                }
             }
         }
 
@@ -188,7 +203,7 @@ namespace Swing.Engine.StateManagement
             }
         }
 
-        public void DestroyThings()
+        private void FinalDestroyThings()
         {
             while (toDestroy.Count > 0)
             {
@@ -207,16 +222,15 @@ namespace Swing.Engine.StateManagement
         /// <summary>
         /// Updates the TransitionPosition property based on the time
         /// </summary>
-        /// <param name="gameTime">an object representing time in the game</param>
         /// <param name="time">The amount of time the transition should take</param>
         /// <param name="direction">The direction of the transition</param>
         /// <returns>true if still transitioning, false if the transition is done</returns>
-        private bool UpdateTransitionPosition(GameTime gameTime, TimeSpan time, int direction)
+        private bool UpdateTransitionPosition(TimeSpan time, int direction)
         {
             // How much should we move by?
             float transitionDelta = (time == TimeSpan.Zero)
                 ? 1
-                : (float)(gameTime.ElapsedGameTime.TotalMilliseconds / time.TotalMilliseconds);
+                : (float)(Time.DeltaTime / time.TotalSeconds);
 
             // Update the transition time
             TransitionPosition += transitionDelta * direction;
@@ -236,20 +250,16 @@ namespace Swing.Engine.StateManagement
         /// Handles input for this screen.  Only called when the screen is active,
         /// and not when another screen has taken focus.
         /// </summary>
-        /// <param name="gameTime">An object representing time in the game</param>
         /// <param name="input">An object representing input</param>
-        public virtual void HandleInput(GameTime gameTime, InputState input) { }
+        public virtual void HandleInput(InputState input) { }
 
         /// <summary>
         /// Draws the GameScreen.  Only called with the screen is active, and not 
         /// when another screen has taken the focus.
         /// </summary>
-        /// <param name="gameTime">An object representing time in the game</param>
-        public virtual void Draw(GameTime gameTime)
+        public virtual void Draw()
         {
             ScreenManager.SpriteBatch.Begin(samplerState: SamplerState.PointClamp);
-
-            //_frameCounter.Draw(gameTime, SpriteBatch, DebugFont);
 
             foreach (Actor actor in actors)
             {
@@ -257,6 +267,11 @@ namespace Swing.Engine.StateManagement
                     actor.EngineDraw();
             }
             ScreenManager.SpriteBatch.End();
+        }
+
+        public virtual void FinalDestory()
+        {
+            FinalDestroyThings();
         }
 
         /// <summary>
@@ -270,11 +285,13 @@ namespace Swing.Engine.StateManagement
                 IsExiting = true;    // Otherwise flag that it should transition off and then exit.
         }
 
-        public Actor Instantiate(Actor a)
+        public T Instantiate<T>(T a) where T : Actor
         {
             actors.Add(a);
 
-            a.Start();
+            a.Screen = this;
+
+            a.EngineStart();
 
             if (contentLoaded)
                 a.EngineLoadContent(ScreenManager.Content);

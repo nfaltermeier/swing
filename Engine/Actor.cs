@@ -13,16 +13,15 @@ namespace Swing.Engine
     {
         public virtual Vector2 Position { get; set; }
         public bool IsDestroyed { get; private set; }
-        public GameScreen Screen { get; private set; }
+        public GameScreen Screen { get; set; }
 
         private List<Component> components;
         private bool contentLoaded = false;
 
-        public Actor(GameScreen screen) : this(screen, Vector2.Zero) { }
+        public Actor() : this(Vector2.Zero) { }
 
-        public Actor(GameScreen screen, Vector2 position)
+        public Actor(Vector2 position)
         {
-            this.Screen = screen;
             Position = position;
             components = new List<Component>();
             IsDestroyed = false;
@@ -37,11 +36,7 @@ namespace Swing.Engine
 
         public void RenderSprite(Rectangle destination, Texture2D sprite, Color color, float depth = 0f)
         {
-            Vector2 offset = new Vector2(destination.X, destination.Y).WorldToScreenspace();
-            destination.X = (int)offset.X;
-            destination.Y = (int)offset.Y;
-
-            Screen.ScreenManager.SpriteBatch.Draw(sprite, destination, null, color, 0f, Vector2.Zero, SpriteEffects.None, depth);
+            Screen.ScreenManager.SpriteBatch.Draw(sprite, destination.WorldToScreenspace(), null, color, 0f, Vector2.Zero, SpriteEffects.None, depth);
         }
 
         public void RenderSpriteFromSheet(Vector2 position, Texture2D sprite, int spriteWidth, int spriteHeight, int cellX, int cellY, int frame)
@@ -61,9 +56,20 @@ namespace Swing.Engine
             Screen.ScreenManager.SpriteBatch.DrawString(font, text, position, color);
         }
 
+        public void RenderCenteredTextScreenspace(Vector2 position, string text, SpriteFont font)
+        {
+            Vector2 textSize = font.MeasureString(text);
+            RenderTextScreenspace(position - (textSize / 2f), text, font, Color.White);
+        }
+
         public void RenderTextWorldspace(Vector2 position, string text, SpriteFont font)
         {
             RenderTextScreenspace(position.WorldToScreenspace(), text, font);
+        }
+        public void RenderCenteredTextWorldspace(Vector2 position, string text, SpriteFont font)
+        {
+            Vector2 textSize = font.MeasureString(text);
+            RenderTextWorldspace(position - (textSize / 2f), text, font);
         }
 
         public void RenderDebugTextScreenspace(Vector2 position, string text)
@@ -127,6 +133,14 @@ namespace Swing.Engine
             }
         }
 
+        internal void EngineStart()
+        {
+            if (Screen == null)
+                Debug.LogError($"Screen was null in {this}");
+
+            Start();
+        }
+
         internal void EngineLoadContent(ContentManager content)
         {
             LoadContent(content);
@@ -173,7 +187,7 @@ namespace Swing.Engine
         }
 
         #region Virtual methods
-        internal virtual void Start()
+        protected virtual void Start()
         {
 
         }

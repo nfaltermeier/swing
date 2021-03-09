@@ -41,7 +41,7 @@ namespace Swing.Engine.Components
 
             bAttached.Body.LinearVelocity += instantVel;
 
-            if (InputManager.UseTool && screen.Contains(InputManager.MouseLocation))
+            if (InputManager.MouseClicked && screen.Contains(InputManager.MouseLocation))
             {
                 if (swingPoint == null)
                 {

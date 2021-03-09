@@ -5,6 +5,7 @@ using Swing.Engine;
 using Swing.Engine.Components;
 using System;
 using Microsoft.Xna.Framework.Audio;
+using tainicom.Aether.Physics2D.Diagnostics;
 using tainicom.Aether.Physics2D.Dynamics;
 using Swing.Engine.StateManagement;
 using Swing.Screens;
@@ -19,9 +20,11 @@ namespace Swing
         public int DisplayWidth => _graphics.PreferredBackBufferWidth;
         public int DisplayHeight => _graphics.PreferredBackBufferHeight;
         public World World { get; private set; }
+        public Matrix ProjectionMatrix { get; private set; }
+        public Matrix ViewMatrix { get; private set; }
+        public DebugView DebugView { get; private set; }
 
         private GraphicsDeviceManager _graphics;
-        private FrameCounter _frameCounter = new FrameCounter();
         private ScreenManager screenManager;
 
         public MainGame()
@@ -41,12 +44,25 @@ namespace Swing
         protected override void Initialize()
         {
             World = new World(Vector2.UnitY * -90);
+            DebugView = new DebugView(World);
+            DebugView.DefaultShapeColor = Color.White;
+            DebugView.SleepingShapeColor = Color.LightGray;
+            DebugView.LoadContent(GraphicsDevice, Content);
+            if (Debug.DISPLAY_COLLIDERS)
+            {
+                DebugView.AppendFlags(DebugViewFlags.DebugPanel);
+            }
 
             screenManager = new ScreenManager(this);
             Components.Add(screenManager);
 
             screenManager.AddScreen(new Background(), null);
-            screenManager.AddScreen(new MainGameScreen(), null);
+            screenManager.AddScreen(new MainMenu(), null);
+
+            ProjectionMatrix = Matrix.CreateOrthographicOffCenter(0, DisplayWidth, DisplayHeight, 0, 0, -100) *
+                                Matrix.CreateScale(1, -1, 1) *
+                                Matrix.CreateTranslation(1f, 1f, 0);
+            ViewMatrix = Matrix.CreateLookAt(Vector3.Zero, Vector3.Forward, Vector3.Up);
 
             //SoundEffect.MasterVolume = 0;
 
@@ -70,10 +86,6 @@ namespace Swing
 
         protected override void Draw(GameTime gameTime)
         {
-            /*SpriteBatch.Begin(samplerState: SamplerState.PointClamp);
-            _frameCounter.Draw(gameTime, SpriteBatch, DebugFont);
-            SpriteBatch.End();*/
-
             base.Draw(gameTime);
         }
 
