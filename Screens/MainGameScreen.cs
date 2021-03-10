@@ -15,7 +15,7 @@ namespace Swing.Screens
         public MainGameScreen()
         {
             TMXParser.ParseData data = TMXParser.ParseTilemap("Content/Levels/1.tmx", (b => b == (byte)Tiles.Goal || b == (byte)Tiles.PlayerSpawn));
-            TilemapRenderer renderer = Instantiate(new TilemapRenderer(Vector2.Zero, data.tiles, "Tilesheet", 64)) as TilemapRenderer;
+            TilemapRenderer renderer = Instantiate(new TilemapRenderer(Vector2.Zero, data.tiles, "Tilesheet", 64));
 
             Vector2 playerPosition = Vector2.Zero;
             foreach (Point p in data.interestingPoints)
@@ -34,6 +34,13 @@ namespace Swing.Screens
             }
 
             Instantiate(new Player(playerPosition));
+            Instantiate(new PauseListener());
+        }
+
+        // always draw
+        public override void UpdateTransitions(bool otherScreenHasFocus, bool coveredByOtherScreen)
+        {
+            base.UpdateTransitions(otherScreenHasFocus, false);
         }
     }
 }

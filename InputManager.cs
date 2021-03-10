@@ -11,21 +11,27 @@ namespace Swing
     {
         public static Vector2 Direction { get; private set; }
         public static Vector2 SecondaryDirection { get; private set; }
-        public static bool Exit { get; private set; }
+        public static bool MenuButton { get; private set; }
         /// <summary>
         /// The screenspace position of the mouse cursor
         /// </summary>
         public static Vector2 MouseLocation { get; private set; }
-        public static bool MouseClicked { get; private set; }
+        public static bool MousePressed { get; private set; }
+        public static bool MouseReleased { get; private set; }
+        public static bool MouseHeld { get; private set; }
 
         private static KeyboardState currentKeyboardState;
+        private static KeyboardState previousKeyboardState;
         private static GamePadState currentGamePadState;
+        private static GamePadState previousGamePadState;
         private static MouseState currentMouseState;
         private static MouseState previousMouseState;
 
         public static void Update()
         {
+            previousKeyboardState = currentKeyboardState;
             currentKeyboardState = Keyboard.GetState();
+            previousGamePadState = currentGamePadState;
             currentGamePadState = GamePad.GetState(0);
             previousMouseState = currentMouseState;
             currentMouseState = Mouse.GetState();
@@ -78,16 +84,25 @@ namespace Swing
             }
             #endregion
 
-            #region Exit
-            Exit = currentGamePadState.Buttons.Back == ButtonState.Pressed || currentKeyboardState.IsKeyDown(Keys.Escape);
+            #region MenuButton
+            MenuButton = (currentGamePadState.Buttons.Start == ButtonState.Pressed && previousGamePadState.Buttons.Start == ButtonState.Released) ||
+                (currentKeyboardState.IsKeyDown(Keys.Escape) && previousKeyboardState.IsKeyUp(Keys.Escape));
             #endregion
 
             #region MouseLocation
             MouseLocation = currentMouseState.Position.ToVector2();
             #endregion
 
-            #region UseTool
-            MouseClicked = currentMouseState.LeftButton == ButtonState.Released && previousMouseState.LeftButton == ButtonState.Pressed;
+            #region MousePressed
+            MousePressed = currentMouseState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Released;
+            #endregion
+
+            #region MouseReleased
+            MouseReleased = currentMouseState.LeftButton == ButtonState.Released && previousMouseState.LeftButton == ButtonState.Pressed;
+            #endregion
+
+            #region MouseHeld
+            MouseHeld = currentMouseState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Pressed;
             #endregion
         }
     }

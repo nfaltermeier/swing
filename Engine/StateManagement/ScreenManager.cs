@@ -15,6 +15,9 @@ namespace Swing.Engine.StateManagement
         private readonly List<GameScreen> _screens = new List<GameScreen>();
         private readonly List<GameScreen> _tmpScreensList = new List<GameScreen>();
         private readonly List<GameScreen> screensToDestroy = new List<GameScreen>();
+        private readonly List<GameScreen> screensToDestroyAfterDraw = new List<GameScreen>();
+        private readonly List<(GameScreen, bool)> screensToChangeActiveAfterDraw = new List<(GameScreen, bool)>();
+        private readonly List<GameScreen> screensToAddAfterDraw = new List<GameScreen>();
 
         private readonly InputState _input = new InputState();
 
@@ -35,9 +38,13 @@ namespace Swing.Engine.StateManagement
         /// Constructs a new ScreenManager
         /// </summary>
         /// <param name="game">The game this ScreenManager belongs to</param>
-        public ScreenManager(MainGame game) : base(game)
+        public ScreenManager(MainGame game, GameScreen[] initialScreens) : base(game)
         {
             Content = new ContentManager(game.Services, "Content");
+            foreach (GameScreen screen in initialScreens)
+            {
+                AddScreen(screen, null);
+            }
         }
 
         /// <summary>
@@ -56,8 +63,8 @@ namespace Swing.Engine.StateManagement
             contentLoaded = true;
             SpriteBatch = new SpriteBatch(GraphicsDevice);
 
-            DebugFont = Content.Load<SpriteFont>("debug");
-            DebugPixel = Content.Load<Texture2D>("1x1WhitePixel");
+            DebugFont = Content.Load<SpriteFont>("Engine/debug");
+            DebugPixel = Content.Load<Texture2D>("Engine/1x1WhitePixel");
 
             // Tell each of the screens to load thier content 
             foreach (var screen in _screens)
@@ -84,6 +91,7 @@ namespace Swing.Engine.StateManagement
         public override void Update(GameTime gameTime)
         {
             Time.UpdateTime(gameTime);
+            InputManager.Update();
 
             // Read in the keyboard and gamepad
             _input.Update();
@@ -173,6 +181,31 @@ namespace Swing.Engine.StateManagement
             _frameCounter.Draw(gameTime, SpriteBatch, DebugFont);
             SpriteBatch.End();
 
+            while (screensToDestroyAfterDraw.Count > 0)
+            {
+                RemoveScreen(screensToDestroyAfterDraw[0]);
+                screensToDestroyAfterDraw.RemoveAt(0);
+            }
+
+            while (screensToDestroy.Count > 0)
+            {
+                screensToDestroy[0].FinalDestory();
+                screensToDestroy.RemoveAt(0);
+            }
+
+            while(screensToChangeActiveAfterDraw.Count > 0)
+            {
+                (GameScreen screen, bool enable) = screensToChangeActiveAfterDraw[0];
+                screen.Active = enable;
+                screensToChangeActiveAfterDraw.RemoveAt(0);
+            }
+
+            while (screensToAddAfterDraw.Count > 0)
+            {
+                AddScreen(screensToAddAfterDraw[0], null);
+                screensToAddAfterDraw.RemoveAt(0);
+            }
+
             if (Debug.DISPLAY_COLLIDERS)
             {
                 MainGame.Instance.DebugView.RenderDebugData(MainGame.Instance.ProjectionMatrix, MainGame.Instance.ViewMatrix);
@@ -183,7 +216,7 @@ namespace Swing.Engine.StateManagement
         /// Adds a screen to the ScreenManager
         /// </summary>
         /// <param name="screen">The screen to add</param>
-        public void AddScreen(GameScreen screen, PlayerIndex? controllingPlayer)
+        private void AddScreen(GameScreen screen, PlayerIndex? controllingPlayer)
         {
             screen.ControllingPlayer = controllingPlayer;
             screen.ScreenManager = this;
@@ -197,7 +230,7 @@ namespace Swing.Engine.StateManagement
             _screens.Add(screen);
         }
 
-        public void RemoveScreen(GameScreen screen)
+        private void RemoveScreen(GameScreen screen)
         {
             if (screen.IsDestroyed)
                 return;
@@ -240,6 +273,26 @@ namespace Swing.Engine.StateManagement
         public bool Activate()
         {
             return false;
+        }
+
+        public void QueueActivateScreen(GameScreen screen)
+        {
+            screensToChangeActiveAfterDraw.Add((screen, true));
+        }
+
+        public void QueueDeactivateScreen(GameScreen screen)
+        {
+            screensToChangeActiveAfterDraw.Add((screen, false));
+        }
+
+        public void QueueRemoveScreen(GameScreen screen)
+        {
+            screensToDestroyAfterDraw.Add(screen);
+        }
+
+        public void QueueAddScreen(GameScreen screen)
+        {
+            screensToAddAfterDraw.Add(screen);
         }
     }
 }

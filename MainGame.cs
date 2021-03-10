@@ -9,6 +9,7 @@ using tainicom.Aether.Physics2D.Diagnostics;
 using tainicom.Aether.Physics2D.Dynamics;
 using Swing.Engine.StateManagement;
 using Swing.Screens;
+using Microsoft.Xna.Framework.Media;
 
 namespace Swing
 {
@@ -23,9 +24,9 @@ namespace Swing
         public Matrix ProjectionMatrix { get; private set; }
         public Matrix ViewMatrix { get; private set; }
         public DebugView DebugView { get; private set; }
+        public ScreenManager ScreenManager { get; private set; }
 
         private GraphicsDeviceManager _graphics;
-        private ScreenManager screenManager;
 
         public MainGame()
         {
@@ -37,6 +38,8 @@ namespace Swing
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
             Window.Title = "Swing";
+            SoundEffect.MasterVolume = 0.75f;
+            MediaPlayer.Volume = 0.75f;
 
             Instance = this;
         }
@@ -53,18 +56,13 @@ namespace Swing
                 DebugView.AppendFlags(DebugViewFlags.DebugPanel);
             }
 
-            screenManager = new ScreenManager(this);
-            Components.Add(screenManager);
-
-            screenManager.AddScreen(new Background(), null);
-            screenManager.AddScreen(new MainMenu(), null);
+            ScreenManager = new ScreenManager(this, new GameScreen[] { new Background(), new MainMenu() });
+            Components.Add(ScreenManager);
 
             ProjectionMatrix = Matrix.CreateOrthographicOffCenter(0, DisplayWidth, DisplayHeight, 0, 0, -100) *
                                 Matrix.CreateScale(1, -1, 1) *
                                 Matrix.CreateTranslation(1f, 1f, 0);
             ViewMatrix = Matrix.CreateLookAt(Vector3.Zero, Vector3.Forward, Vector3.Up);
-
-            //SoundEffect.MasterVolume = 0;
 
             base.Initialize();
         }
@@ -76,11 +74,6 @@ namespace Swing
 
         protected override void Update(GameTime gameTime)
         {
-            InputManager.Update();
-
-            if (InputManager.Exit)
-                Exit();
-
             base.Update(gameTime);
         }
 

@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Swing.Engine.Actors.UI
 {
-    public class BackButton<T> : Button where T : GameScreen
+    public class BackButton<ScreenToGoTo> : Button where ScreenToGoTo : GameScreen
     {
         /// <summary>
         /// Takes a screen space position
@@ -19,10 +19,14 @@ namespace Swing.Engine.Actors.UI
 
         private void BackButton_Activated()
         {
-             if (Screen.ScreenManager.GetScreen<T>() is T backTo)
+             if (Screen.ScreenManager.GetScreen<ScreenToGoTo>() is ScreenToGoTo backTo)
              {
-                backTo.Active = true;
+                Screen.ScreenManager.QueueActivateScreen(backTo);
                 Screen.ExitScreen();
+            }
+             else
+             {
+                Debug.LogError($"Could not find a screen of {typeof(ScreenToGoTo)} from {Screen}");
              }
         }
     }

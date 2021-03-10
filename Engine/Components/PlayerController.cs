@@ -41,7 +41,7 @@ namespace Swing.Engine.Components
 
             bAttached.Body.LinearVelocity += instantVel;
 
-            if (InputManager.MouseClicked && screen.Contains(InputManager.MouseLocation))
+            if (InputManager.MousePressed && screen.Contains(InputManager.MouseLocation))
             {
                 if (swingPoint == null)
                 {
@@ -87,7 +87,7 @@ namespace Swing.Engine.Components
             base.Draw();
             if (swingPoint is Vector2 sp)
             {
-                Attached.RenderSprite(new Rectangle((int)sp.X, (int)sp.Y, 1, 1), Attached.Screen.ScreenManager.DebugPixel, Color.Red);
+                Actor.RenderSprite(new Rectangle((int)sp.X, (int)sp.Y, 1, 1), Attached.Screen.ScreenManager.DebugPixel, Color.Red);
             }
         }
 

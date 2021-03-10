@@ -52,7 +52,7 @@ namespace Swing.Engine.Actors.UI
         {
             base.LoadContent(content);
 
-            background = content.Load<Texture2D>("ButtonBase");
+            background = content.Load<Texture2D>("Engine/UI/ButtonBase");
             // Called to update the bounds
             Position = Position;
         }
@@ -61,7 +61,7 @@ namespace Swing.Engine.Actors.UI
         {
             base.Update();
 
-            if (InputManager.MouseClicked && screenBounds.Contains(InputManager.MouseLocation))
+            if (InputManager.MousePressed && screenBounds.Contains(InputManager.MouseLocation))
                 OnActivate();
         }
 
@@ -69,8 +69,11 @@ namespace Swing.Engine.Actors.UI
         {
             base.Draw();
 
-            RenderSprite(worldPosition, background);
+            RenderSpriteScreenspace(screenBounds, background, Color.White);
             RenderCenteredTextScreenspace(Position, text, Screen.ScreenManager.DebugFont);
+
+            if (Debug.DISPLAY_UI_RECTANGLES)
+                Debug.DrawRectangleOutlineScreenspace(screenBounds);
         }
     }
 }

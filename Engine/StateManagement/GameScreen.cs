@@ -175,7 +175,7 @@ namespace Swing.Engine.StateManagement
                 ScreenState = ScreenState.TransitionOff;
 
                 if (!UpdateTransitionPosition(TransitionOffTime, 1))
-                    ScreenManager.RemoveScreen(this);
+                    ScreenManager.QueueRemoveScreen(this);
             }
             else if (coveredByOtherScreen)
             {
@@ -280,7 +280,7 @@ namespace Swing.Engine.StateManagement
         public void ExitScreen()
         {
             if (TransitionOffTime == TimeSpan.Zero)
-                ScreenManager.RemoveScreen(this);    // If the screen has a zero transition time, remove it immediately
+                ScreenManager.QueueRemoveScreen(this);    // If the screen has a zero transition time, remove it immediately
             else
                 IsExiting = true;    // Otherwise flag that it should transition off and then exit.
         }
