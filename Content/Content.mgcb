@@ -63,18 +63,6 @@
 /processorParam:TextureFormat=Color
 /build:Engine/UI/ValueSliderBackground.png
 
-#begin Engine/UI/ValueSliderBackground.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Engine/UI/ValueSliderBackground.png
-
 #begin Engine/UI/ValueSliderHandle.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -87,20 +75,40 @@
 /processorParam:TextureFormat=Color
 /build:Engine/UI/ValueSliderHandle.png
 
-#begin Engine/UI/ValueSliderHandle.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
+#begin Jump.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Jump.wav
+
+#begin LargeFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Engine/UI/ValueSliderHandle.png
+/processorParam:TextureFormat=Compressed
+/build:LargeFont.spritefont
 
 #begin Levels/1.tmx
 /copy:Levels/1.tmx
+
+#begin Levels/2.tmx
+/copy:Levels/2.tmx
+
+#begin Levels/3.tmx
+/copy:Levels/3.tmx
+
+#begin Levels/4.tmx
+/copy:Levels/4.tmx
+
+#begin Levels/5.tmx
+/copy:Levels/5.tmx
+
+#begin MediumFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:MediumFont.spritefont
 
 #begin Player.png
 /importer:TextureImporter

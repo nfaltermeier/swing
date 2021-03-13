@@ -21,6 +21,8 @@ namespace Swing.Screens
             if (drawOverlay)
                 Instantiate(new Overlay());
 
+            Instantiate(new TextRenderer(new Vector2(halfWidth, 200), "Settings", TextRenderer.Style.Large));
+
             Instantiate(new TextRenderer(new Vector2(thirdWidth, thirdHeight - 30), "Sound Effect Volume"));
             Instantiate(new ValueSlider(new Vector2(thirdWidth, thirdHeight), SoundEffect.MasterVolume)).ValueChanged += SoundEffectVolume_ValueChanged;
 

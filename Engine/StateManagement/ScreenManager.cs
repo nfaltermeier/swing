@@ -178,9 +178,9 @@ namespace Swing.Engine.StateManagement
                 screen.Draw();
             }
 
-            SpriteBatch.Begin(samplerState: SamplerState.PointClamp);
+            /*SpriteBatch.Begin(samplerState: SamplerState.PointClamp);
             _frameCounter.Draw(gameTime, SpriteBatch, DebugFont);
-            SpriteBatch.End();
+            SpriteBatch.End();*/
 
             while (screensToDestroyAfterDraw.Count > 0)
             {

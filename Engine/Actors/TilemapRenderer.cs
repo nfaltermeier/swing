@@ -45,7 +45,7 @@ namespace Swing.Engine.Actors
             {
                 for (int y = 0; y < tilemap.GetLength(1); y++)
                 {
-                    if (tilemap[x, y] == (byte)Tiles.Wall || tilemap[x, y] == (byte)Tiles.Spike)
+                    if (tilemap[x, y] == (byte)Tiles.Wall || tilemap[x, y] == (byte)Tiles.UpSpike)
                     {
                         Body b = MainGame.Instance.World.CreateRectangle(colliderSize, colliderSize, 20, GetPositionOfTile(x, y) / MainGame.PhysicsScale);
                         foreach (Fixture f in b.FixtureList)
@@ -55,7 +55,10 @@ namespace Swing.Engine.Actors
                                 case (byte)Tiles.Wall:
                                     f.Tag = ColliderTags.Wall;
                                     break;
-                                case (byte)Tiles.Spike:
+                                case (byte)Tiles.UpSpike:
+                                case (byte)Tiles.DownSpike:
+                                case (byte)Tiles.LeftSpike:
+                                case (byte)Tiles.RightSpike:
                                     f.Tag = ColliderTags.Spike;
                                     break;
                             }
@@ -86,7 +89,8 @@ namespace Swing.Engine.Actors
                 {
                     if (tilemap[x,y] != 0)
                     {
-                        RenderSpriteFromSheet(GetPositionOfTile(x, y), spritesheet, tileSize, tileSize, (tilemap[x,y] - 1) % sheetTileCountX, (tilemap[x,y] - 1) / sheetTileCountY, 0);
+                        RenderSpriteFromSheet(GetPositionOfTile(x, y), spritesheet, tileSize, tileSize,
+                            (tilemap[x,y] - 1) % sheetTileCountX, (tilemap[x,y] - 1) / sheetTileCountX, 0);
                     }
                 }
             }

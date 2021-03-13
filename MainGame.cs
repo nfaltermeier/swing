@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Swing.Engine;
-using Swing.Engine.Components;
 using System;
 using Microsoft.Xna.Framework.Audio;
 using tainicom.Aether.Physics2D.Diagnostics;
@@ -25,6 +24,8 @@ namespace Swing
         public Matrix ViewMatrix { get; private set; }
         public DebugView DebugView { get; private set; }
         public ScreenManager ScreenManager { get; private set; }
+        public int Deaths { get; set; }
+        public TimeSpan RunTime { get; set; }
 
         /// <summary>
         /// Pixels are 1 / PhysicsScale meters
@@ -43,8 +44,8 @@ namespace Swing
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
             Window.Title = "Swing";
-            SoundEffect.MasterVolume = 0.75f;
-            MediaPlayer.Volume = 0.75f;
+            SoundEffect.MasterVolume = 0.5f;
+            MediaPlayer.Volume = 0.5f;
 
             Instance = this;
         }
@@ -85,33 +86,6 @@ namespace Swing
         protected override void Draw(GameTime gameTime)
         {
             base.Draw(gameTime);
-        }
-
-        public Rectangle GetPlayBounds(int inset)
-        {
-            int displayLeft = 64 + inset;
-            int displayRight = DisplayWidth - 64 - inset;
-            int widthRange = displayRight - displayLeft;
-            int displayTop = 56 + 64 + inset;
-            int displayBottom = DisplayHeight - 64 - inset;
-            int heightRange = displayBottom - displayTop;
-
-            return new Rectangle(displayLeft, displayTop, widthRange, heightRange);
-        }
-
-        private Vector2 GetPositionAwayFromPoint(Vector2 point, float distanceFromPlayer)
-        {
-            Vector2 pos;
-            do
-            {
-                Rectangle bounds = GetPlayBounds(32);
-                // Prevent them from spawning on the border 5% of the screen
-                pos.X = ((float)Utilities.random.NextDouble() * bounds.Width) + bounds.Left;
-                pos.Y = ((float)Utilities.random.NextDouble() * bounds.Height) + bounds.Top;
-                pos = pos.ScreenToWorldspace();
-            } while (Vector2.Distance(point, pos) < distanceFromPlayer);
-
-            return pos;
         }
     }
 }

@@ -10,7 +10,7 @@ namespace Swing.Engine.Actors.UI
         private Color color;
         private Rectangle screen;
 
-        public Overlay() : this(new Color(0.5f, 0.5f, 0.5f, 0.25f)) { }
+        public Overlay() : this(new Color(0.25f, 0.25f, 0.25f, 0.25f)) { }
 
         public Overlay(Color color) : base(Vector2.Zero)
         {

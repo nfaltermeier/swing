@@ -13,6 +13,7 @@ namespace Swing.Engine.Actors.UI
         private string text;
         private Vector2 worldPosition;
         private Rectangle screenBounds;
+        private SpriteFont font;
 
         public event Action Activated;
 
@@ -53,6 +54,7 @@ namespace Swing.Engine.Actors.UI
             base.LoadContent(content);
 
             background = content.Load<Texture2D>("Engine/UI/ButtonBase");
+            font = content.Load<SpriteFont>("MediumFont");
             // Called to update the bounds
             Position = Position;
         }
@@ -70,7 +72,7 @@ namespace Swing.Engine.Actors.UI
             base.Draw();
 
             RenderSpriteScreenspace(screenBounds, background, Color.White);
-            RenderCenteredTextScreenspace(Position, text, Screen.ScreenManager.DebugFont);
+            RenderCenteredTextScreenspace(Position, text, font);
 
             if (Debug.DISPLAY_UI_RECTANGLES)
                 Debug.DrawRectangleOutlineScreenspace(screenBounds);

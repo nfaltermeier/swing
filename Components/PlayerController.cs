@@ -5,8 +5,10 @@ using System.Collections.Generic;
 using System.Text;
 using tainicom.Aether.Physics2D.Dynamics;
 using tainicom.Aether.Physics2D.Dynamics.Contacts;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Audio;
 
-namespace Swing.Engine.Components
+namespace Swing.Components
 {
     class PlayerController : Component
     {
@@ -19,6 +21,8 @@ namespace Swing.Engine.Components
         private Dictionary<Fixture, bool> ground;
         private float timeSinceJump;
 
+        private SoundEffect jumpSound;
+
         public PlayerController(BodiedActor attached) : base(attached)
         {
             bAttached = attached;
@@ -30,6 +34,12 @@ namespace Swing.Engine.Components
             ground = new Dictionary<Fixture, bool>();
             timeSinceJump = 0;
             swingPoint = null;
+        }
+
+        internal override void LoadContent(ContentManager content)
+        {
+            base.LoadContent(content);
+            jumpSound = content.Load<SoundEffect>("Jump");
         }
 
         internal override void Update()
@@ -69,6 +79,7 @@ namespace Swing.Engine.Components
                 {
                     timeSinceJump = 0;
                     bAttached.Body.ApplyForce(Vector2.UnitY * 80 * bAttached.Body.Mass * MainGame.PhysicsScale);
+                    jumpSound.Play(0.7f, 0, 0);
                 }
                 else if (timeSinceJump <= JumpHangTime)
                 {
@@ -112,8 +123,6 @@ namespace Swing.Engine.Components
             // If the wall was chosen to be the POV character for the contact
             if (contact.FixtureA.Body.BodyType != BodyType.Dynamic)
                 normal *= -1;
-
-            Debug.LogClean($"{normal.ToString()} {contact.FixtureA.Body.BodyType}");
 
             if (Vector2.Dot(normal, -Vector2.UnitY) > 0.5f)
             {

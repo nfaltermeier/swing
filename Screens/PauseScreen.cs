@@ -17,7 +17,7 @@ namespace Swing.Screens
             float halfWidth = MainGame.Instance.DisplayWidth / 2f;
 
             Instantiate(new Overlay());
-            Instantiate(new TextRenderer(new Vector2(halfWidth, 200), "Paused"));
+            Instantiate(new TextRenderer(new Vector2(halfWidth, 200), "Paused", TextRenderer.Style.Large));
             Instantiate(new Button(new Vector2(halfWidth, 300), "Resume")).Activated += Resume_Activated;
             Instantiate(new SettingsButton<PauseScreen>(new Vector2(halfWidth, 500)));
             Instantiate(new Button(new Vector2(halfWidth, 700), "Main Menu")).Activated += MainMenu_Activated;

@@ -13,9 +13,12 @@ namespace Swing.Screens
     {
         public MainMenu()
         {
+            MainGame.Instance.Deaths = 0;
+            MainGame.Instance.RunTime = TimeSpan.Zero;
+
             float halfScreenWidth = MainGame.Instance.DisplayWidth / 2f;
 
-            Instantiate(new TextRenderer(new Vector2(halfScreenWidth, 200), "Swing"));
+            Instantiate(new TextRenderer(new Vector2(halfScreenWidth, 200), "Swing", TextRenderer.Style.Large));
             Instantiate(new Button(new Vector2(halfScreenWidth, 400), "Play")).Activated += Play_Activated;
             Instantiate(new SettingsButton<MainMenu>(new Vector2(halfScreenWidth, 600)));
             Instantiate(new QuitButton(new Vector2(halfScreenWidth, 800)));
@@ -24,7 +27,7 @@ namespace Swing.Screens
 
         private void Play_Activated()
         {
-            ScreenManager.QueueAddScreen(new MainGameScreen());
+            ScreenManager.QueueAddScreen(new MainGameScreen(1));
             ExitScreen();
         }
     }

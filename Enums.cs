@@ -8,9 +8,12 @@ namespace Swing
     {
         Nothing = 0,
         Wall = 1,
-        Spike = 2,
+        UpSpike = 2,
         Goal = 3,
         PlayerSpawn = 4,
+        RightSpike = 5,
+        LeftSpike = 6,
+        DownSpike = 7,
     }
 
     enum ColliderTags

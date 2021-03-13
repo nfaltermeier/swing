@@ -7,9 +7,9 @@ namespace Swing.Engine
 {
     static class Debug
     {
-        public static readonly bool DISPLAY_COLLIDERS = true;
+        public static readonly bool DISPLAY_COLLIDERS = false;
         public static readonly bool DISPLAY_UI_RECTANGLES = false;
-        public static readonly bool DISPLAY_PLAYER_TOUCHING_COLLIDERS = true;
+        public static readonly bool DISPLAY_PLAYER_TOUCHING_COLLIDERS = false;
 
         public static readonly Dictionary<Fixture, bool> playerTouchingColliders;
 

@@ -72,18 +72,15 @@ namespace Swing.Engine.Actors.UI
 
             if (mouseAttached)
             {
-                float x = MathHelper.Clamp(InputManager.MouseLocation.X, totalFillSpace.Left, totalFillSpace.Right);
-                float newValue = (x - totalFillSpace.Left) / totalFillSpace.Width;
-
-                if (newValue != value)
-                {
-                    value = newValue;
-                    CalcHandleAndFillLocation();
-                    ValueChanged?.Invoke(value);
-                }
+                CalcNewValue();
             }
 
-            lastClicked = InputManager.MousePressed && handleLocation.Contains(InputManager.MouseLocation);
+            lastClicked = false;
+            if (InputManager.MousePressed && backgroundLocation.Contains(InputManager.MouseLocation))
+            {
+                CalcNewValue();
+                lastClicked = true;
+            }
         }
 
         protected override void Draw()
@@ -107,6 +104,19 @@ namespace Swing.Engine.Actors.UI
             // Works because these are structs
             fillLocation = totalFillSpace;
             fillLocation.Width = (int)filledAmount;
+        }
+
+        private void CalcNewValue()
+        {
+            float x = MathHelper.Clamp(InputManager.MouseLocation.X, totalFillSpace.Left, totalFillSpace.Right);
+            float newValue = (x - totalFillSpace.Left) / totalFillSpace.Width;
+
+            if (newValue != value)
+            {
+                value = newValue;
+                CalcHandleAndFillLocation();
+                ValueChanged?.Invoke(value);
+            }
         }
     }
 }

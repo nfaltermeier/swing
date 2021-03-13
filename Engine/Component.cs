@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Swing.Engine.Components;
 using Microsoft.Xna.Framework.Content;
 
 namespace Swing.Engine
