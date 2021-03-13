@@ -45,7 +45,8 @@ namespace Swing.Engine.Actors
             {
                 for (int y = 0; y < tilemap.GetLength(1); y++)
                 {
-                    if (tilemap[x, y] == (byte)Tiles.Wall || tilemap[x, y] == (byte)Tiles.UpSpike)
+                    if (tilemap[x, y] == (byte)Tiles.Wall || tilemap[x, y] == (byte)Tiles.UpSpike || tilemap[x, y] == (byte)Tiles.DownSpike ||
+                         tilemap[x, y] == (byte)Tiles.LeftSpike || tilemap[x, y] == (byte)Tiles.RightSpike)
                     {
                         Body b = MainGame.Instance.World.CreateRectangle(colliderSize, colliderSize, 20, GetPositionOfTile(x, y) / MainGame.PhysicsScale);
                         foreach (Fixture f in b.FixtureList)
