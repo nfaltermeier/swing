@@ -107,8 +107,8 @@ namespace Swing
             #endregion
 
             #region Jump
-            Jump = (currentGamePadState.Buttons.A == ButtonState.Pressed && previousGamePadState.Buttons.A == ButtonState.Released) ||
-                (currentKeyboardState.IsKeyDown(Keys.Space) && previousKeyboardState.IsKeyUp(Keys.Space));
+            Jump = (currentGamePadState.Buttons.A == ButtonState.Pressed) ||
+                (currentKeyboardState.IsKeyDown(Keys.Space));
             #endregion
         }
     }

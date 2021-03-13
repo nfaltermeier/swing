@@ -11,12 +11,13 @@ namespace Swing.Engine.Components
     class PlayerController : Component
     {
         public float Acceleration { get; set; } = 3 * MainGame.PhysicsScale;
-        public float JumpHangTime { get; set; } = 0.5f;
+        public float JumpHangTime { get; set; } = 0.3f;
 
         BodiedActor bAttached;
         private Vector2? swingPoint = null;
         private Rectangle screen = new Rectangle(0, 0, 1920, 1080);
         private Dictionary<Fixture, bool> ground;
+        private float timeSinceJump;
 
         public PlayerController(BodiedActor attached) : base(attached)
         {
@@ -27,11 +28,14 @@ namespace Swing.Engine.Components
         {
             base.Start();
             ground = new Dictionary<Fixture, bool>();
+            timeSinceJump = 0;
+            swingPoint = null;
         }
 
         internal override void Update()
         {
             base.Update();
+            timeSinceJump += Time.DeltaTime;
 
             Vector2 instantVel = InputManager.Direction * Acceleration * Time.DeltaTime;
             if (instantVel.Y > 0)
@@ -59,9 +63,18 @@ namespace Swing.Engine.Components
                 }
             }*/
 
-            if (InputManager.Jump && ground.Count > 0)
+            if (InputManager.Jump)
             {
-                bAttached.Body.ApplyForce(Vector2.UnitY * 340 * bAttached.Body.Mass * MainGame.PhysicsScale);
+                if (ground.Count > 0)
+                {
+                    timeSinceJump = 0;
+                    bAttached.Body.ApplyForce(Vector2.UnitY * 80 * bAttached.Body.Mass * MainGame.PhysicsScale);
+                }
+                else if (timeSinceJump <= JumpHangTime)
+                {
+                    bAttached.Body.ApplyForce(Vector2.UnitY * 11 * bAttached.Body.Mass * MainGame.PhysicsScale);
+                }
+                //bAttached.Body.ApplyForce(Vector2.UnitY * 22 * bAttached.Body.Mass * (MathF.Max(JumpHangTime - timeSinceJump, 0f) / JumpHangTime) * MainGame.PhysicsScale);
             }
         }
 
@@ -96,7 +109,13 @@ namespace Swing.Engine.Components
         {
             contact.GetWorldManifold(out Vector2 normal, out _);
 
-            if (Vector2.Dot(normal, Vector2.UnitY) > 0.5f)
+            // If the wall was chosen to be the POV character for the contact
+            if (contact.FixtureA.Body.BodyType != BodyType.Dynamic)
+                normal *= -1;
+
+            Debug.LogClean($"{normal.ToString()} {contact.FixtureA.Body.BodyType}");
+
+            if (Vector2.Dot(normal, -Vector2.UnitY) > 0.5f)
             {
                 ground[wall] = true;
             }

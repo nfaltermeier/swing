@@ -76,5 +76,12 @@ namespace Swing.Actors
 
             RenderSprite(Position, sprite);
         }
+
+        public override void FinalDestroy()
+        {
+            base.FinalDestroy();
+
+            controller = null;
+        }
     }
 }
