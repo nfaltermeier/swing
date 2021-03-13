@@ -15,27 +15,52 @@ namespace Swing.Actors
     public class Player : BodiedActor
     {
         private Texture2D sprite;
+        private PlayerController controller;
 
         public Player(Vector2 position) : base(position)
         {
-            Body = MainGame.Instance.World.CreateRectangle(64, 64, 1, bodyType: BodyType.Dynamic);
+            Body = MainGame.Instance.World.CreateRectangle(64f / MainGame.PhysicsScale, 64f / MainGame.PhysicsScale, 50f, Position / MainGame.PhysicsScale, bodyType: BodyType.Dynamic);
             Body.FixedRotation = true;
             Body.OnCollision += Body_OnCollision;
+            Body.OnSeparation += Body_OnSeparation;
+            Body.LinearDamping = .5f;
         }
 
         private bool Body_OnCollision(Fixture sender, Fixture other, Contact contact)
         {
-            if (other.Tag is ColliderTags tag && tag == ColliderTags.Spike)
-                Destroy();
+            if (other.Tag is ColliderTags tag)
+            {
+                if (tag == ColliderTags.Spike)
+                    Destroy();
+                else if (tag == ColliderTags.Wall)
+                {
+                    if (controller != null && !controller.IsDestroyed)
+                        controller.OnTouchWall(sender, other, contact);
+                }
+
+            }
 
             return true;
+        }
+
+        private void Body_OnSeparation(Fixture sender, Fixture other, Contact contact)
+        {
+            if (other.Tag is ColliderTags tag)
+            {
+                if (tag == ColliderTags.Wall)
+                {
+                    if (controller != null && !controller.IsDestroyed)
+                        controller.OnLeaveWall(sender, other, contact);
+                }
+
+            }
         }
 
         protected override void Start()
         {
             base.Start();
 
-            AddComponent(new PlayerController(this));
+            controller = AddComponent(new PlayerController(this));
         }
 
         protected override void LoadContent(ContentManager content)

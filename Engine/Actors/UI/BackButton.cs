@@ -19,15 +19,15 @@ namespace Swing.Engine.Actors.UI
 
         private void BackButton_Activated()
         {
-             if (Screen.ScreenManager.GetScreen<ScreenToGoTo>() is ScreenToGoTo backTo)
-             {
+            if (Screen.ScreenManager.GetScreen<ScreenToGoTo>() is ScreenToGoTo backTo)
+            {
                 Screen.ScreenManager.QueueActivateScreen(backTo);
                 Screen.ExitScreen();
             }
-             else
-             {
+            else
+            {
                 Debug.LogError($"Could not find a screen of {typeof(ScreenToGoTo)} from {Screen}");
-             }
+            }
         }
     }
 }

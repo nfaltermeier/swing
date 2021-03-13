@@ -24,7 +24,7 @@ namespace Swing.Engine
             get
             {
                 if (Body != null)
-                    return Body.Position;
+                    return Body.Position * MainGame.PhysicsScale;
                 else
                     return base.Position;
             }
@@ -32,7 +32,7 @@ namespace Swing.Engine
             set
             {
                 if (Body != null)
-                    Body.Position = value;
+                    Body.Position = value / MainGame.PhysicsScale;
                 else
                     base.Position = value;
             }

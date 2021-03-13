@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using tainicom.Aether.Physics2D.Dynamics;
 
 namespace Swing.Engine.StateManagement
 {
@@ -96,8 +97,8 @@ namespace Swing.Engine.StateManagement
             // Read in the keyboard and gamepad
             _input.Update();
 
-            Time.IsInFixedUpdate = true;
             timeSinceFixedUpdate += Time.UpdateDeltaTime;
+            Time.IsInFixedUpdate = true;
             while (timeSinceFixedUpdate > Time.FixedDeltaTime)
             {
                 timeSinceFixedUpdate -= Time.FixedDeltaTime;
@@ -208,7 +209,24 @@ namespace Swing.Engine.StateManagement
 
             if (Debug.DISPLAY_COLLIDERS)
             {
-                MainGame.Instance.DebugView.RenderDebugData(MainGame.Instance.ProjectionMatrix, MainGame.Instance.ViewMatrix);
+                MainGame.Instance.DebugView.RenderDebugData(MainGame.Instance.PhysicsProjectionMatrix, MainGame.Instance.ViewMatrix);
+            }
+
+
+            if (Debug.DISPLAY_PLAYER_TOUCHING_COLLIDERS)
+            {
+                if (Debug.playerTouchingColliders.Count > 0)
+                {
+                    MainGame.Instance.DebugView.BeginCustomDraw(MainGame.Instance.PhysicsProjectionMatrix, MainGame.Instance.ViewMatrix);
+
+                    Dictionary<Fixture, bool>.KeyCollection fixtures = Debug.playerTouchingColliders.Keys;
+                    foreach (Fixture f in fixtures)
+                    {
+                        MainGame.Instance.DebugView.DrawShape(f, f.Body.GetTransform(), Color.White);
+                    }
+
+                    MainGame.Instance.DebugView.EndCustomDraw();
+                }
             }
         }
 

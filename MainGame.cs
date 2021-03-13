@@ -21,10 +21,15 @@ namespace Swing
         public int DisplayWidth => _graphics.PreferredBackBufferWidth;
         public int DisplayHeight => _graphics.PreferredBackBufferHeight;
         public World World { get; private set; }
-        public Matrix ProjectionMatrix { get; private set; }
+        public Matrix PhysicsProjectionMatrix { get; private set; }
         public Matrix ViewMatrix { get; private set; }
         public DebugView DebugView { get; private set; }
         public ScreenManager ScreenManager { get; private set; }
+
+        /// <summary>
+        /// Pixels are 1 / PhysicsScale meters
+        /// </summary>
+        public static readonly float PhysicsScale = 10;
 
         private GraphicsDeviceManager _graphics;
 
@@ -46,7 +51,7 @@ namespace Swing
 
         protected override void Initialize()
         {
-            World = new World(Vector2.UnitY * -90);
+            World = new World(Vector2.UnitY * -5 * PhysicsScale);
             DebugView = new DebugView(World);
             DebugView.DefaultShapeColor = Color.White;
             DebugView.SleepingShapeColor = Color.LightGray;
@@ -59,9 +64,9 @@ namespace Swing
             ScreenManager = new ScreenManager(this, new GameScreen[] { new Background(), new MainMenu() });
             Components.Add(ScreenManager);
 
-            ProjectionMatrix = Matrix.CreateOrthographicOffCenter(0, DisplayWidth, DisplayHeight, 0, 0, -100) *
-                                Matrix.CreateScale(1, -1, 1) *
-                                Matrix.CreateTranslation(1f, 1f, 0);
+            PhysicsProjectionMatrix = Matrix.CreateOrthographicOffCenter(0, DisplayWidth, DisplayHeight, 0, 0, -100) *
+                                Matrix.CreateScale(PhysicsScale, -PhysicsScale, 1) *
+                                Matrix.CreateTranslation(PhysicsScale, PhysicsScale, 0);
             ViewMatrix = Matrix.CreateLookAt(Vector3.Zero, Vector3.Forward, Vector3.Up);
 
             base.Initialize();

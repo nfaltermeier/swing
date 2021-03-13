@@ -4,16 +4,19 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using tainicom.Aether.Physics2D.Dynamics;
+using tainicom.Aether.Physics2D.Dynamics.Contacts;
 
 namespace Swing.Engine.Components
 {
     class PlayerController : Component
     {
-        public float Acceleration { get; set; } = 300;
+        public float Acceleration { get; set; } = 3 * MainGame.PhysicsScale;
+        public float JumpHangTime { get; set; } = 0.5f;
 
         BodiedActor bAttached;
         private Vector2? swingPoint = null;
         private Rectangle screen = new Rectangle(0, 0, 1920, 1080);
+        private Dictionary<Fixture, bool> ground;
 
         public PlayerController(BodiedActor attached) : base(attached)
         {
@@ -23,6 +26,7 @@ namespace Swing.Engine.Components
         internal override void Start()
         {
             base.Start();
+            ground = new Dictionary<Fixture, bool>();
         }
 
         internal override void Update()
@@ -30,6 +34,8 @@ namespace Swing.Engine.Components
             base.Update();
 
             Vector2 instantVel = InputManager.Direction * Acceleration * Time.DeltaTime;
+            if (instantVel.Y > 0)
+                instantVel.Y = 0;
 
             // Make stopping faster
             if (Vector2.Dot(Vector2.Normalize(instantVel), Vector2.Normalize(bAttached.Body.LinearVelocity)) < 0.25f)
@@ -37,11 +43,11 @@ namespace Swing.Engine.Components
                 instantVel *= 2f;
             }
 
-            Debug.Log($"Velocity: {bAttached.Body.LinearVelocity}, instantVel: {instantVel}");
+            //Debug.Log($"Velocity: {bAttached.Body.LinearVelocity}, instantVel: {instantVel}");
 
             bAttached.Body.LinearVelocity += instantVel;
 
-            if (InputManager.MousePressed && screen.Contains(InputManager.MouseLocation))
+            /*if (InputManager.MousePressed && screen.Contains(InputManager.MouseLocation))
             {
                 if (swingPoint == null)
                 {
@@ -51,6 +57,11 @@ namespace Swing.Engine.Components
                 {
                     swingPoint = null;
                 }
+            }*/
+
+            if (InputManager.Jump && ground.Count > 0)
+            {
+                bAttached.Body.ApplyForce(Vector2.UnitY * 340 * bAttached.Body.Mass * MainGame.PhysicsScale);
             }
         }
 
@@ -76,11 +87,42 @@ namespace Swing.Engine.Components
                 float velsq = bAttached.Body.LinearVelocity.LengthSquared();
                 accel *= (velsq / 100f);
                 Vector2 am = accel * bAttached.Body.Mass;
-                Debug.Log($"r: {r}, a: {accel}");
+                //Debug.Log($"r: {r}, a: {accel}");
                 bAttached.Body.ApplyForce(am);
             }
         }
 
+        public void OnTouchWall(Fixture sender, Fixture wall, Contact contact)
+        {
+            contact.GetWorldManifold(out Vector2 normal, out _);
+
+            if (Vector2.Dot(normal, Vector2.UnitY) > 0.5f)
+            {
+                ground[wall] = true;
+            }
+
+            /*float xDot = Vector2.Dot(normal, Vector2.UnitX);
+            if (xDot > .85f)
+                rightWalls[wall] = true;
+            else if (xDot < -.85f)
+                leftWalls[wall] = true;*/
+
+            if (Debug.DISPLAY_PLAYER_TOUCHING_COLLIDERS)
+            {
+                Debug.playerTouchingColliders[wall] = true;
+            }
+        }
+
+        public void OnLeaveWall(Fixture sender, Fixture wall, Contact contact)
+        {
+            if (ground.ContainsKey(wall))
+                ground.Remove(wall);
+
+            if (Debug.DISPLAY_PLAYER_TOUCHING_COLLIDERS)
+            {
+                Debug.playerTouchingColliders.Remove(wall);
+            }
+        }
 
         internal override void Draw()
         {
@@ -96,6 +138,12 @@ namespace Swing.Engine.Components
             base.FinalDestroy();
 
             bAttached = null;
+            ground = null;
+
+            if (Debug.DISPLAY_PLAYER_TOUCHING_COLLIDERS)
+            {
+                Debug.playerTouchingColliders.Clear();
+            }
         }
     }
 }

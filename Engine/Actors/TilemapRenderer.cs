@@ -40,13 +40,14 @@ namespace Swing.Engine.Actors
         {
             bodies = new List<Body>();
 
+            float colliderSize = tileSize / MainGame.PhysicsScale;
             for (int x = 0; x < tilemap.GetLength(0); x++)
             {
                 for (int y = 0; y < tilemap.GetLength(1); y++)
                 {
                     if (tilemap[x, y] == (byte)Tiles.Wall || tilemap[x, y] == (byte)Tiles.Spike)
                     {
-                        Body b = MainGame.Instance.World.CreateRectangle(tileSize, tileSize, 1, GetPositionOfTile(x, y));
+                        Body b = MainGame.Instance.World.CreateRectangle(colliderSize, colliderSize, 20, GetPositionOfTile(x, y) / MainGame.PhysicsScale);
                         foreach (Fixture f in b.FixtureList)
                         {
                             switch (tilemap[x, y])

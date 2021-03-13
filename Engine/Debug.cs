@@ -1,12 +1,25 @@
 ﻿using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using tainicom.Aether.Physics2D.Dynamics;
 
 namespace Swing.Engine
 {
     static class Debug
     {
-        public static readonly bool DISPLAY_COLLIDERS = false;
+        public static readonly bool DISPLAY_COLLIDERS = true;
         public static readonly bool DISPLAY_UI_RECTANGLES = false;
+        public static readonly bool DISPLAY_PLAYER_TOUCHING_COLLIDERS = true;
+
+        public static readonly Dictionary<Fixture, bool> playerTouchingColliders;
+
+        static Debug()
+        {
+            if (DISPLAY_PLAYER_TOUCHING_COLLIDERS)
+            {
+                playerTouchingColliders = new Dictionary<Fixture, bool>();
+            }
+        }
 
         /// <summary>
         /// Logs a message and includes calling method, source file, and line number
