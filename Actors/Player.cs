@@ -37,6 +37,7 @@ namespace Swing.Actors
             if (IsDestroyed)
                 return true;
 
+            bool ret = true;
             if (other.Tag is ColliderTags tag)
             {
                 if (tag == ColliderTags.Spike)
@@ -56,12 +57,12 @@ namespace Swing.Actors
                 else if (tag == ColliderTags.Wall)
                 {
                     if (controller != null && !controller.IsDestroyed)
-                        controller.OnTouchWall(sender, other, contact);
+                        ret = controller.OnTouchWall(sender, other, contact);
                 }
 
             }
 
-            return true;
+            return ret;
         }
 
         private void Body_OnSeparation(Fixture sender, Fixture other, Contact contact)

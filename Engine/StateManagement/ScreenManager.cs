@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -19,6 +20,7 @@ namespace Swing.Engine.StateManagement
         private readonly List<GameScreen> screensToDestroyAfterDraw = new List<GameScreen>();
         private readonly List<(GameScreen, bool)> screensToChangeActiveAfterDraw = new List<(GameScreen, bool)>();
         private readonly List<GameScreen> screensToAddAfterDraw = new List<GameScreen>();
+        private readonly List<Action> postPhysicsStepActions = new List<Action>();
 
         private readonly InputState _input = new InputState();
 
@@ -117,6 +119,12 @@ namespace Swing.Engine.StateManagement
                 }
 
                 MainGame.Instance.World.Step(Time.DeltaTime);
+
+                while (postPhysicsStepActions.Count > 0)
+                {
+                    postPhysicsStepActions[0]();
+                    postPhysicsStepActions.RemoveAt(0);
+                }
             }
             Time.IsInFixedUpdate = false;
 
@@ -311,6 +319,11 @@ namespace Swing.Engine.StateManagement
         public void QueueAddScreen(GameScreen screen)
         {
             screensToAddAfterDraw.Add(screen);
+        }
+
+        public void AddPostPhysicsStepAction(Action a)
+        {
+            postPhysicsStepActions.Add(a);
         }
     }
 }
