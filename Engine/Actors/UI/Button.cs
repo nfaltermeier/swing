@@ -17,6 +17,8 @@ namespace Swing.Engine.Actors.UI
 
         public event Action Activated;
 
+        public override RenderType RenderType => RenderType.UI;
+
         public override Vector2 Position {
             get => base.Position;
             set
@@ -71,7 +73,7 @@ namespace Swing.Engine.Actors.UI
         {
             base.Draw();
 
-            RenderSpriteScreenspace(screenBounds, background, Color.White);
+            RenderSpriteUI(screenBounds, background, Color.White, RenderOrder.UIBack);
             RenderCenteredTextScreenspace(Position, text, font);
 
             if (Debug.DISPLAY_UI_RECTANGLES)

@@ -259,14 +259,45 @@ namespace Swing.Engine.StateManagement
         /// </summary>
         public virtual void Draw()
         {
-            ScreenManager.SpriteBatch.Begin(samplerState: SamplerState.PointClamp);
+            List<Actor> uiElements = new List<Actor>();
+            List<Actor> customElements = new List<Actor>();
 
+            ScreenManager.SpriteBatch.Begin(samplerState: SamplerState.PointClamp, sortMode: SpriteSortMode.FrontToBack, transformMatrix: MainGame.Instance.StandardTransformMatrix, rasterizerState: RasterizerState.CullClockwise);
             foreach (Actor actor in actors)
             {
                 if (!actor.IsDestroyed)
-                    actor.EngineDraw();
+                {
+                    switch (actor.RenderType)
+                    {
+                        case RenderType.Standard:
+                        default:
+                            actor.EngineDraw();
+                            break;
+                        case RenderType.UI:
+                            uiElements.Add(actor);
+                            break;
+                        case RenderType.Custom:
+                            customElements.Add(actor);
+                            break;
+                    }
+                }
             }
             ScreenManager.SpriteBatch.End();
+
+            if (uiElements.Count > 0)
+            {
+                ScreenManager.SpriteBatch.Begin(samplerState: SamplerState.PointClamp, sortMode: SpriteSortMode.FrontToBack);
+                foreach (Actor actor in uiElements)
+                {
+                    actor.EngineDraw();
+                }
+                ScreenManager.SpriteBatch.End();
+            }
+
+            foreach (Actor actor in customElements)
+            {
+                actor.EngineDraw();
+            }
         }
 
         public virtual void FinalDestory()

@@ -13,6 +13,7 @@ namespace Swing.Engine
         public virtual Vector2 Position { get; set; }
         public bool IsDestroyed { get; private set; }
         public GameScreen Screen { get; set; }
+        public virtual RenderType RenderType => RenderType.Standard;
 
         private List<Component> components;
         private bool contentLoaded = false;
@@ -27,58 +28,81 @@ namespace Swing.Engine
         }
 
         #region Render methods
-        public static void RenderSprite(Vector2 position, Texture2D sprite)
-        {
-            RenderSpriteScreenspace(position.WorldToScreenspace(), sprite);
-        }
-
-        public static void RenderSpriteScreenspace(Vector2 position, Texture2D sprite)
+        /// <summary>
+        /// Renders sprites vertically flipped so they appear correctly when rendered with the standard transform
+        /// </summary>
+        /// <param name="position">Where to draw the center of the sprite</param>
+        /// <param name="sprite"></param>
+        /// <param name="depth">1f front, 0f back</param>
+        public static void RenderSprite(Vector2 position, Texture2D sprite, float depth)
         {
             MainGame.Instance.ScreenManager.SpriteBatch.Draw(sprite, position, null, Color.White, 0,
-                new Vector2(sprite.Width / 2, sprite.Height / 2), 1, SpriteEffects.None, 0);
+                new Vector2(sprite.Width / 2, sprite.Height / 2), 1, SpriteEffects.FlipVertically, depth);
         }
 
-        public static void RenderSprite(Rectangle destination, Texture2D sprite, Color color, float depth = 0f)
+        /// <summary>
+        /// Renders sprites vertically flipped so they appear correctly when rendered with the standard transform
+        /// </summary>
+        /// <param name="position">Where to draw the center of the sprite</param>
+        /// <param name="sprite">The spritesheet</param>
+        /// <param name="spriteWidth"></param>
+        /// <param name="spriteHeight"></param>
+        /// <param name="cellX">The x coordinate of the sprite to draw, where 0,0 is the top left of the sheet</param>
+        /// <param name="cellY">The y coordinate of the sprite to draw, where 0,0 is the top left of the sheet</param>
+        /// <param name="frame">The frame of the sprite animation to draw, assuming the frames are laid horizontally</param>
+        /// <param name="depth">1f front, 0f back</param>
+        public static void RenderSpriteFromSheet(Vector2 position, Texture2D sprite, int spriteWidth, int spriteHeight, int cellX, int cellY, int frame, float depth)
         {
-            RenderSpriteScreenspace(destination.WorldToScreenspace(), sprite, color, depth);
+            Rectangle r = new Rectangle((cellX + frame) * spriteWidth, cellY * spriteHeight, spriteWidth, spriteHeight);
+            MainGame.Instance.ScreenManager.SpriteBatch.Draw(sprite, position, r, Color.White, 0,
+                new Vector2(spriteWidth / 2, spriteHeight / 2), 1, SpriteEffects.FlipVertically, depth);
         }
 
-        public static void RenderSpriteScreenspace(Rectangle destination, Texture2D sprite, Color color, float depth = 0f)
+        /// <summary>
+        /// Renders sprites unflipped so they appear correctly when rendered with the UI
+        /// </summary>
+        /// <param name="destination"></param>
+        /// <param name="sprite"></param>
+        /// <param name="color"></param>
+        /// <param name="depth">1f front, 0f back</param>
+        public static void RenderSpriteUI(Rectangle destination, Texture2D sprite, Color color, float depth)
         {
             MainGame.Instance.ScreenManager.SpriteBatch.Draw(sprite, destination, null, color, 0f, Vector2.Zero, SpriteEffects.None, depth);
         }
 
-        public static void RenderSpriteFromSheet(Vector2 position, Texture2D sprite, int spriteWidth, int spriteHeight, int cellX, int cellY, int frame)
-        {
-            Rectangle r = new Rectangle((cellX + frame) * spriteWidth, cellY * spriteHeight, spriteWidth, spriteHeight);
-            MainGame.Instance.ScreenManager.SpriteBatch.Draw(sprite, position.WorldToScreenspace(), r, Color.White, 0,
-                new Vector2(spriteWidth / 2, spriteHeight / 2), 1, SpriteEffects.None, 0);
-        }
-
+        /// <summary>
+        /// Renders text where the top left is at the given position
+        /// </summary>
+        /// <param name="position">The top left of the text to render</param>
+        /// <param name="text"></param>
+        /// <param name="font"></param>
         public static void RenderTextScreenspace(Vector2 position, string text, SpriteFont font)
         {
             RenderTextScreenspace(position, text, font, Color.White);
         }
 
+        /// <summary>
+        /// Renders text where the top left is at the given position
+        /// </summary>
+        /// <param name="position">The top left of the text to render</param>
+        /// <param name="text"></param>
+        /// <param name="font"></param>
+        /// <param name="color"></param>
         public static void RenderTextScreenspace(Vector2 position, string text, SpriteFont font, Color color)
         {
-            MainGame.Instance.ScreenManager.SpriteBatch.DrawString(font, text, position, color);
+            MainGame.Instance.ScreenManager.SpriteBatch.DrawString(font, text, position, color, 0f, Vector2.Zero, 1f, SpriteEffects.None, RenderOrder.Text);
         }
 
+        /// <summary>
+        /// Renders text where the center is at the given position
+        /// </summary>
+        /// <param name="position">The center of the text to render</param>
+        /// <param name="text"></param>
+        /// <param name="font"></param>
         public static void RenderCenteredTextScreenspace(Vector2 position, string text, SpriteFont font)
         {
             Vector2 textSize = font.MeasureString(text);
             RenderTextScreenspace(position - (textSize / 2f), text, font, Color.White);
-        }
-
-        public static void RenderTextWorldspace(Vector2 position, string text, SpriteFont font)
-        {
-            RenderTextScreenspace(position.WorldToScreenspace(), text, font);
-        }
-        public static void RenderCenteredTextWorldspace(Vector2 position, string text, SpriteFont font)
-        {
-            Vector2 textSize = font.MeasureString(text);
-            RenderTextWorldspace(position - (textSize / 2f), text, font);
         }
 
         public static void RenderDebugTextScreenspace(Vector2 position, string text)
@@ -226,5 +250,12 @@ namespace Swing.Engine
             components = null;
         }
         #endregion
+    }
+
+    public enum RenderType
+    {
+        Standard,
+        UI,
+        Custom
     }
 }

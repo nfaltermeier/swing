@@ -22,6 +22,8 @@ namespace Swing.Engine.Actors.UI
         private bool mouseAttached;
         private float value;
 
+        public override RenderType RenderType => RenderType.UI;
+
         public override Vector2 Position {
             get => base.Position;
             set
@@ -87,9 +89,9 @@ namespace Swing.Engine.Actors.UI
         {
             base.Draw();
 
-            RenderSpriteScreenspace(backgroundLocation, background, Color.White);
-            RenderSpriteScreenspace(fillLocation, Screen.ScreenManager.DebugPixel, fillColor);
-            RenderSpriteScreenspace(handleLocation, handle, Color.White);
+            RenderSpriteUI(backgroundLocation, background, Color.White, RenderOrder.UIBack);
+            RenderSpriteUI(fillLocation, Screen.ScreenManager.DebugPixel, fillColor, RenderOrder.UIMiddle);
+            RenderSpriteUI(handleLocation, handle, Color.White, RenderOrder.UIFront);
 
             if (Debug.DISPLAY_UI_RECTANGLES)
                 Debug.DrawRectangleOutlineScreenspace(handleLocation);

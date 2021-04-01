@@ -91,7 +91,7 @@ namespace Swing.Engine.Actors
                     if (tilemap[x,y] != 0)
                     {
                         RenderSpriteFromSheet(GetPositionOfTile(x, y), spritesheet, tileSize, tileSize,
-                            (tilemap[x,y] - 1) % sheetTileCountX, (tilemap[x,y] - 1) / sheetTileCountX, 0);
+                            (tilemap[x,y] - 1) % sheetTileCountX, (tilemap[x,y] - 1) / sheetTileCountX, 0, RenderOrder.Background);
                     }
                 }
             }

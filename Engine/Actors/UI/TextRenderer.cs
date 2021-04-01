@@ -13,6 +13,8 @@ namespace Swing.Engine.Actors.UI
         protected SpriteFont font;
         private Style style;
 
+        public override RenderType RenderType => RenderType.UI;
+
         /// <summary>
         /// Takes a screen space position
         /// </summary>

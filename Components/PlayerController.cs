@@ -195,7 +195,7 @@ namespace Swing.Components
             base.Draw();
             if (swingPoint is Vector2 sp)
             {
-                Actor.RenderSprite(new Rectangle((int)sp.X, (int)sp.Y, 1, 1), Attached.Screen.ScreenManager.DebugPixel, Color.Red);
+                Actor.RenderSpriteUI(new Rectangle((int)sp.X, (int)sp.Y, 1, 1), Attached.Screen.ScreenManager.DebugPixel, Color.Red, RenderOrder.Debug);
             }
         }
 

@@ -63,10 +63,10 @@ namespace Swing.Engine
             int iW = r.Width;
             int iH = r.Height;
 
-            Actor.RenderSpriteScreenspace(new Rectangle(iX, iY, 1, iH), MainGame.Instance.ScreenManager.DebugPixel, color, 1f);
-            Actor.RenderSpriteScreenspace(new Rectangle(iX, iY, iW, 1), MainGame.Instance.ScreenManager.DebugPixel, color, 1f);
-            Actor.RenderSpriteScreenspace(new Rectangle(iX + iW, iY, 1, iH), MainGame.Instance.ScreenManager.DebugPixel, color, 1f);
-            Actor.RenderSpriteScreenspace(new Rectangle(iX, iY + iH, iW, 1), MainGame.Instance.ScreenManager.DebugPixel, color, 1f);
+            Actor.RenderSpriteUI(new Rectangle(iX, iY, 1, iH), MainGame.Instance.ScreenManager.DebugPixel, color, 1f);
+            Actor.RenderSpriteUI(new Rectangle(iX, iY, iW, 1), MainGame.Instance.ScreenManager.DebugPixel, color, 1f);
+            Actor.RenderSpriteUI(new Rectangle(iX + iW, iY, 1, iH), MainGame.Instance.ScreenManager.DebugPixel, color, 1f);
+            Actor.RenderSpriteUI(new Rectangle(iX, iY + iH, iW, 1), MainGame.Instance.ScreenManager.DebugPixel, color, 1f);
         }
     }
 }

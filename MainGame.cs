@@ -22,6 +22,7 @@ namespace Swing
         public World World { get; private set; }
         public Matrix PhysicsProjectionMatrix { get; private set; }
         public Matrix ViewMatrix { get; private set; }
+        public Matrix StandardTransformMatrix { get; private set; }
         public DebugView DebugView { get; private set; }
         public ScreenManager ScreenManager { get; private set; }
         public int Deaths { get; set; }
@@ -68,6 +69,7 @@ namespace Swing
             PhysicsProjectionMatrix = Matrix.CreateOrthographicOffCenter(0, DisplayWidth, DisplayHeight, 0, 0, -100) *
                                 Matrix.CreateScale(PhysicsScale, -PhysicsScale, 1) *
                                 Matrix.CreateTranslation(PhysicsScale, PhysicsScale, 0);
+            StandardTransformMatrix = Matrix.CreateTranslation(DisplayWidth / 2, -DisplayHeight / 2, 0) * Matrix.CreateScale(1, -1f, 1);
             ViewMatrix = Matrix.CreateLookAt(Vector3.Zero, Vector3.Forward, Vector3.Up);
 
             base.Initialize();

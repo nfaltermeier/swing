@@ -99,7 +99,7 @@ namespace Swing.Actors
         {
             base.Draw();
 
-            RenderSprite(Position, sprite);
+            RenderSprite(Position, sprite, RenderOrder.Player);
         }
 
         public override void FinalDestroy()

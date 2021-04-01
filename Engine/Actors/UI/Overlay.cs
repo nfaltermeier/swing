@@ -10,6 +10,8 @@ namespace Swing.Engine.Actors.UI
         private Color color;
         private Rectangle screen;
 
+        public override RenderType RenderType => RenderType.UI;
+
         public Overlay() : this(new Color(0.25f, 0.25f, 0.25f, 0.25f)) { }
 
         public Overlay(Color color) : base(Vector2.Zero)
@@ -22,7 +24,7 @@ namespace Swing.Engine.Actors.UI
         {
             base.Draw();
 
-            RenderSpriteScreenspace(screen, Screen.ScreenManager.DebugPixel, color);
+            RenderSpriteUI(screen, Screen.ScreenManager.DebugPixel, color, RenderOrder.UIOverlay);
         }
     }
 }
