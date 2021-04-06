@@ -10,6 +10,7 @@ using System.Text;
 using tainicom.Aether.Physics2D.Dynamics;
 using tainicom.Aether.Physics2D.Dynamics.Contacts;
 using Swing.Screens;
+using Swing.Actors.ParticleSystems;
 
 namespace Swing.Actors
 {
@@ -18,6 +19,12 @@ namespace Swing.Actors
         private Texture2D sprite;
 
         private PlayerController controller;
+
+        private LandingParticleSystem landingParticleSystem;
+
+        private PlayerSpawnParticleSystem playerSpawnParticleSystem;
+
+        private bool isAlive = false;
 
         public Player(Vector2 position, int tileSize) : base(position)
         {
@@ -86,6 +93,19 @@ namespace Swing.Actors
             base.Start();
 
             controller = AddComponent(new PlayerController(this));
+            landingParticleSystem = new LandingParticleSystem(100);
+            Screen.Instantiate(landingParticleSystem);
+            playerSpawnParticleSystem = new PlayerSpawnParticleSystem(100);
+            Screen.Instantiate(playerSpawnParticleSystem);
+            playerSpawnParticleSystem.PlacePlayerSpawnParticle(Position);
+        }
+
+        protected override void Update()
+        {
+            base.Update();
+            if (isAlive && controller.CheckIfLanded())
+                landingParticleSystem.PlaceGroundParticle(Position - new Vector2(0, sprite.Height / 2));
+            isAlive = true;
         }
 
         protected override void LoadContent(ContentManager content)

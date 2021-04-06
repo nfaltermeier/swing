@@ -6,11 +6,14 @@ using System.Collections.Generic;
 using System.Text;
 using tainicom.Aether.Physics2D.Dynamics;
 using tainicom.Aether.Physics2D.Dynamics.Contacts;
+using Swing.Actors.ParticleSystems;
 
 namespace Swing.Actors
 {
     class Goal : BodiedActor
     {
+        GoalParticleSystem goalParticleSystem;
+
         public Goal(Vector2 position, int sideLength) : base(position)
         {
             Body = MainGame.Instance.World.CreateRectangle(sideLength / (MainGame.PhysicsScale * 2),
@@ -20,6 +23,7 @@ namespace Swing.Actors
             {
                 f.IsSensor = true;
             }
+            goalParticleSystem = new GoalParticleSystem(25, Position);
         }
 
         private bool Body_OnCollision(Fixture sender, Fixture other, Contact contact)
@@ -48,6 +52,13 @@ namespace Swing.Actors
             }
 
             return true;
+        }
+
+        protected override void Start()
+        {
+            base.Start();
+
+            Screen.Instantiate(goalParticleSystem);
         }
     }
 }

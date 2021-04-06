@@ -21,6 +21,7 @@ namespace Swing.Components
         BodiedActor bAttached;
         private Vector2? swingPoint = null;
         private Rectangle screen = new Rectangle(0, 0, 1920, 1080);
+        private int previousGroundCount;
         private Dictionary<Fixture, bool> ground;
         private float timeSinceJump;
         private int framesSinceGrounded;
@@ -39,6 +40,7 @@ namespace Swing.Components
             ground = new Dictionary<Fixture, bool>();
             timeSinceJump = 0;
             swingPoint = null;
+            previousGroundCount = ground.Count;
         }
 
         internal override void LoadContent(ContentManager content)
@@ -134,6 +136,8 @@ namespace Swing.Components
                 //Debug.Log($"r: {r}, a: {accel}");
                 bAttached.Body.ApplyForce(am);
             }
+
+            previousGroundCount = ground.Count;
         }
 
         public bool OnTouchWall(Fixture sender, Fixture wall, Contact contact)
@@ -210,6 +214,13 @@ namespace Swing.Components
             {
                 Debug.playerTouchingColliders.Clear();
             }
+        }
+
+        public bool CheckIfLanded()
+        {
+            if (previousGroundCount == 0 && ground.Count > 0) return true;
+
+            return false;
         }
     }
 }

@@ -8,6 +8,7 @@ namespace Swing
     {
         public const float Background = 0.1f;
         public const float Player = 0.5f;
+        public const float Particle = 0.7f;
         public const float UIOverlay = 0.79f;
         public const float UIBack = 0.8f;
         public const float UIMiddle = 0.81f;
