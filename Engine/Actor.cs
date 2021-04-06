@@ -43,7 +43,7 @@ namespace Swing.Engine
         /// <summary>
         /// Renders sprites vertically flipped so they appear correctly when rendered with the standard transform
         /// </summary>
-        /// <param name="position">Where to draw the center of the sprite</param>
+        /// <param name="position">Where to draw the top left of the sprite</param>
         /// <param name="sprite">The spritesheet</param>
         /// <param name="spriteWidth"></param>
         /// <param name="spriteHeight"></param>
@@ -55,7 +55,7 @@ namespace Swing.Engine
         {
             Rectangle r = new Rectangle((cellX + frame) * spriteWidth, cellY * spriteHeight, spriteWidth, spriteHeight);
             MainGame.Instance.ScreenManager.SpriteBatch.Draw(sprite, position, r, Color.White, 0,
-                new Vector2(spriteWidth / 2, spriteHeight / 2), 1, SpriteEffects.FlipVertically, depth);
+                Vector2.Zero, 1, SpriteEffects.FlipVertically, depth);
         }
 
         /// <summary>

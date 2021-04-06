@@ -13,15 +13,19 @@ namespace Swing.Engine
         {
             public readonly byte[,] tiles;
             public readonly List<Point> interestingPoints;
+            public readonly int height;
+            public readonly int width;
 
-            public ParseData(byte[,] tiles, List<Point> interestingPoints)
+            public ParseData(byte[,] tiles, List<Point> interestingPoints, int height, int width)
             {
                 this.tiles = tiles;
                 this.interestingPoints = interestingPoints;
+                this.height = height;
+                this.width = width;
             }
         }
 
-        static public ParseData ParseTilemap(string path, Predicate<byte> interestingTester)
+        static public ParseData ParseTilemap(string path, Predicate<byte> interestingTester, int tileSize)
         {
             XElement tilemapData = XElement.Load(path);
 
@@ -32,7 +36,7 @@ namespace Swing.Engine
             byte[][] tilemapTransposed = new byte[height][];
             byte[,] tilemap = new byte[width, height];
             List<Point> interestingPoints = new List<Point>();
-            ParseData ret = new ParseData(tilemap, interestingPoints);
+            ParseData ret = new ParseData(tilemap, interestingPoints, height * tileSize, width * tileSize);
 
             string data = layer.Element("data").Value;
             string[] lines = data.Split('\n').Where(l => l.Length != 0).ToArray();

@@ -19,6 +19,8 @@ namespace Swing.Engine.Actors
         private int sheetTileCountY;
         private int tileSize;
         private List<Body> bodies;
+        // offset to the top left of the top left tile
+        private Vector2 topLeftOffset;
 
         /// <summary>
         /// Takes a position in screen space for the top left corner of the top left tile.
@@ -29,11 +31,15 @@ namespace Swing.Engine.Actors
         /// <param name="spritesheetName"></param>
         /// <param name="tileSize"></param>
         public TilemapRenderer(Vector2 position, byte[,] tilemap, string spritesheetName, int tileSize) :
-            base(position.ScreenToWorldspace() + new Vector2(tileSize / 2f, -tileSize / 2f))
+            base(position)
         {
             this.tilemap = tilemap;
             this.spritesheetName = spritesheetName;
             this.tileSize = tileSize;
+            topLeftOffset = new Vector2(-tilemap.GetLength(0) * tileSize / 2f, tilemap.GetLength(1) * tileSize / 2f);
+            Vector2 left = GetPositionOfTile(0, 0);
+            Vector2 right = GetPositionOfTile(tilemap.GetLength(0) - 1, tilemap.GetLength(1) - 1) + new Vector2(tileSize, -tileSize);
+            Debug.LogClean($"x: {left.X}, y: {left.Y}, x: {right.X}, y: {right.Y}");
         }
 
         protected override void Start()
@@ -48,7 +54,7 @@ namespace Swing.Engine.Actors
                     if (tilemap[x, y] == (byte)Tiles.Wall || tilemap[x, y] == (byte)Tiles.UpSpike || tilemap[x, y] == (byte)Tiles.DownSpike ||
                          tilemap[x, y] == (byte)Tiles.LeftSpike || tilemap[x, y] == (byte)Tiles.RightSpike)
                     {
-                        Body b = MainGame.Instance.World.CreateRectangle(colliderSize, colliderSize, 20, GetPositionOfTile(x, y) / MainGame.PhysicsScale);
+                        Body b = MainGame.Instance.World.CreateRectangle(colliderSize, colliderSize, 20, GetCenterOfTile(x, y) / MainGame.PhysicsScale);
                         foreach (Fixture f in b.FixtureList)
                         {
                             switch (tilemap[x, y])
@@ -110,9 +116,27 @@ namespace Swing.Engine.Actors
             tilemap = null;
         }
 
+        /// <summary>
+        /// Gets the top left of the tile
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
         public Vector2 GetPositionOfTile(int x, int y)
         {
-            return Position + new Vector2(x * tileSize, -y * tileSize);
+            // Not sure why the y + 1 is needed, but it makes things line up
+            return Position + topLeftOffset + new Vector2(x * tileSize, -(y + 1) * tileSize);
+        }
+
+        /// <summary>
+        /// Gets the top left of the tile
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        public Vector2 GetCenterOfTile(int x, int y)
+        {
+            return Position + topLeftOffset + new Vector2(x * tileSize + (tileSize / 2), -y * tileSize - (tileSize / 2));
         }
     }
 }

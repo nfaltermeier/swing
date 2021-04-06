@@ -111,6 +111,8 @@ namespace Swing.Engine.StateManagement
         private List<IDestroyable> toDestroy;
         private bool contentLoaded = false;
 
+        public Vector2 CameraOffset { get; protected set; }
+
         public GameScreen()
         {
             actors = new List<Actor>();
@@ -262,7 +264,9 @@ namespace Swing.Engine.StateManagement
             List<Actor> uiElements = new List<Actor>();
             List<Actor> customElements = new List<Actor>();
 
-            ScreenManager.SpriteBatch.Begin(samplerState: SamplerState.PointClamp, sortMode: SpriteSortMode.FrontToBack, transformMatrix: MainGame.Instance.StandardTransformMatrix, rasterizerState: RasterizerState.CullClockwise);
+            Matrix transform = GetStandardTransformWithCamera();
+
+            ScreenManager.SpriteBatch.Begin(samplerState: SamplerState.PointClamp, sortMode: SpriteSortMode.FrontToBack, transformMatrix: transform, rasterizerState: RasterizerState.CullClockwise);
             foreach (Actor actor in actors)
             {
                 if (!actor.IsDestroyed)
@@ -346,6 +350,16 @@ namespace Swing.Engine.StateManagement
         public T[] GetActors<T>() where T : Actor
         {
             return actors.Where(a => a is T).Select(a => a as T).ToArray();
+        }
+
+        public Matrix GetStandardTransformWithCamera()
+        {
+            return MainGame.Instance.StandardTransformMatrix * GetCameraTranslation();
+        }
+
+        public Matrix GetCameraTranslation()
+        {
+            return Matrix.CreateTranslation(CameraOffset.X, -CameraOffset.Y, 0);
         }
     }
 }

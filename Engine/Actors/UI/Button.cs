@@ -11,7 +11,6 @@ namespace Swing.Engine.Actors.UI
     {
         private Texture2D background;
         private string text;
-        private Vector2 worldPosition;
         private Rectangle screenBounds;
         private SpriteFont font;
 
@@ -24,7 +23,6 @@ namespace Swing.Engine.Actors.UI
             set
             {
                 base.Position = value;
-                worldPosition = value.ScreenToWorldspace();
 
                 if (background != null)
                 {

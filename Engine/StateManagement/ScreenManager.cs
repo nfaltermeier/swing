@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Swing.Screens;
 using tainicom.Aether.Physics2D.Dynamics;
 
 namespace Swing.Engine.StateManagement
@@ -179,8 +180,11 @@ namespace Swing.Engine.StateManagement
         /// <param name="gameTime">An object representing time in the game</param>
         public override void Draw(GameTime gameTime)
         {
+            MainGameScreen mgs = null;
             foreach (var screen in _screens)
             {
+                if (screen is MainGameScreen main)
+                    mgs = main;
                 if (screen.ScreenState == ScreenState.Hidden) continue;
 
                 screen.Draw();
@@ -217,7 +221,14 @@ namespace Swing.Engine.StateManagement
 
             if (Debug.DISPLAY_COLLIDERS)
             {
-                MainGame.Instance.DebugView.RenderDebugData(MainGame.Instance.PhysicsProjectionMatrix, MainGame.Instance.ViewMatrix);
+                Matrix proj = MainGame.Instance.PhysicsProjectionMatrix;
+                Matrix view = MainGame.Instance.ViewMatrix;
+                if (mgs != null)
+                {
+                    proj = Matrix.CreateTranslation(mgs.CameraOffset.X / MainGame.PhysicsScale, mgs.CameraOffset.Y / MainGame.PhysicsScale, 0) * proj;
+                }
+
+                MainGame.Instance.DebugView.RenderDebugData(proj, view);
             }
 
 
