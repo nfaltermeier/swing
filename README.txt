@@ -2,7 +2,7 @@ Swing. A platforming game. Navigate your blue square to the green square.
 
 ## Controls ##
 * Movement - WASD
-* Jump - Space
+* Jump - Space (Longer press means higher jump)
 * Interact with menu - Mouse
 * Pause - Escape
 

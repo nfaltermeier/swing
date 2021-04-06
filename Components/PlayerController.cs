@@ -163,9 +163,23 @@ namespace Swing.Components
                 Vector2 offset = points[0] - points[1];
                 if (offset.LengthSquared() < 5)
                 {
-                    Attached.Screen.ScreenManager.
-                        AddPostPhysicsStepAction(() => sender.Body.Position += offset * (reversed ? -1 : 1));
-                    ret = false;
+                    Vector2 raySource = points[reversed ? 1 : 0] + 2 * offset * (reversed ? -1 : 1);
+                    bool hit = false;
+                    MainGame.Instance.World.RayCast(
+                        (Fixture fixture, Vector2 point, Vector2 normal, float fraction) => {
+                            hit = fixture != null;
+                            return fraction;
+                        },
+                        raySource, raySource + new Vector2(0, 0.1f)
+                    );
+                    // If there is open space above where we are going to move the player
+                    // prevents the player from glitching out when touching a ceiling with no gaps
+                    if (!hit)
+                    {
+                        Attached.Screen.ScreenManager.
+                            AddPostPhysicsStepAction(() => sender.Body.Position += offset * (reversed ? -1 : 1));
+                        ret = false;
+                    }
                 }
             }
 
