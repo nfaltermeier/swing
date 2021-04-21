@@ -25,6 +25,7 @@ namespace Swing.Actors
         private PlayerSpawnParticleSystem playerSpawnParticleSystem;
 
         private bool isAlive = false;
+        private Vector2 lastInput;
 
         public Player(Vector2 position, int tileSize) : base(position)
         {
@@ -106,6 +107,8 @@ namespace Swing.Actors
             if (isAlive && controller.CheckIfLanded())
                 landingParticleSystem.PlaceGroundParticle(Position - new Vector2(0, sprite.Height / 2));
             isAlive = true;
+            // Store the last direction so the sprite is correct when the game is paused
+            lastInput = InputManager.Direction;
         }
 
         protected override void LoadContent(ContentManager content)
@@ -119,7 +122,12 @@ namespace Swing.Actors
         {
             base.Draw();
 
-            RenderSprite(Position, sprite, RenderOrder.Player);
+            int depth = 0;
+            if (lastInput.X > 0)
+                depth = 2;
+            else if (lastInput.X < 0)
+                depth = 1;
+            RenderSpriteFromSheetCentered(Position, sprite, 64, 64, 0, 0, depth, RenderOrder.Player);
         }
 
         public override void FinalDestroy()

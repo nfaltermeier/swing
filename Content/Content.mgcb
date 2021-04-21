@@ -75,6 +75,12 @@
 /processorParam:TextureFormat=Color
 /build:Engine/UI/ValueSliderHandle.png
 
+#begin footsteps.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:footsteps.wav
+
 #begin Jump.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor

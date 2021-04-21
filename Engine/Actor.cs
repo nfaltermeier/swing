@@ -59,6 +59,25 @@ namespace Swing.Engine
         }
 
         /// <summary>
+        /// Renders sprites vertically flipped so they appear correctly when rendered with the standard transform.
+        /// position is the center of the sprite.
+        /// </summary>
+        /// <param name="position">Where to draw the center of the sprite</param>
+        /// <param name="sprite">The spritesheet</param>
+        /// <param name="spriteWidth"></param>
+        /// <param name="spriteHeight"></param>
+        /// <param name="cellX">The x coordinate of the sprite to draw, where 0,0 is the top left of the sheet</param>
+        /// <param name="cellY">The y coordinate of the sprite to draw, where 0,0 is the top left of the sheet</param>
+        /// <param name="frame">The frame of the sprite animation to draw, assuming the frames are laid horizontally</param>
+        /// <param name="depth">1f front, 0f back</param>
+        public static void RenderSpriteFromSheetCentered(Vector2 position, Texture2D sprite, int spriteWidth, int spriteHeight, int cellX, int cellY, int frame, float depth)
+        {
+            Rectangle r = new Rectangle((cellX + frame) * spriteWidth, cellY * spriteHeight, spriteWidth, spriteHeight);
+            MainGame.Instance.ScreenManager.SpriteBatch.Draw(sprite, position, r, Color.White, 0,
+                new Vector2(spriteWidth / 2, spriteHeight / 2), 1, SpriteEffects.FlipVertically, depth);
+        }
+
+        /// <summary>
         /// Renders sprites unflipped so they appear correctly when rendered with the UI
         /// </summary>
         /// <param name="destination"></param>

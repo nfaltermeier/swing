@@ -28,6 +28,7 @@ namespace Swing.Components
         private int jumpCooldown;
 
         private SoundEffect jumpSound;
+        private SoundEffectInstance runSound;
 
         public PlayerController(BodiedActor attached) : base(attached)
         {
@@ -47,11 +48,23 @@ namespace Swing.Components
         {
             base.LoadContent(content);
             jumpSound = content.Load<SoundEffect>("Jump");
+            runSound = content.Load<SoundEffect>("footsteps").CreateInstance();
         }
 
         internal override void Update()
         {
             base.Update();
+
+            if (bAttached.Body.LinearVelocity.LengthSquared() > 0 && ground.Count > 0)
+            {
+                if (runSound.State != SoundState.Playing)
+                    runSound.Play();
+            }
+            else
+            {
+                if (runSound.State == SoundState.Playing)
+                    runSound.Pause();
+            }
 
             Vector2 instantVel = InputManager.Direction * Acceleration * Time.DeltaTime;
             if (instantVel.Y > 0)
