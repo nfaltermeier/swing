@@ -234,6 +234,8 @@ namespace Swing.Components
         {
             base.FinalDestroy();
 
+            if (runSound != null)
+                runSound.Stop();
             bAttached = null;
             ground = null;
 
