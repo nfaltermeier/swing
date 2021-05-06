@@ -22,7 +22,7 @@ namespace Swing.Components
         private Vector2? swingPoint = null;
         private Rectangle screen = new Rectangle(0, 0, 1920, 1080);
         private int previousGroundCount;
-        private Dictionary<Fixture, bool> ground;
+        private HashSet<Fixture> ground;
         private float timeSinceJump;
         private int framesSinceGrounded;
         private int jumpCooldown;
@@ -38,7 +38,7 @@ namespace Swing.Components
         internal override void Start()
         {
             base.Start();
-            ground = new Dictionary<Fixture, bool>();
+            ground = new HashSet<Fixture>();
             timeSinceJump = 0;
             swingPoint = null;
             previousGroundCount = ground.Count;
@@ -169,7 +169,7 @@ namespace Swing.Components
 
             if (Vector2.Dot(normal, -Vector2.UnitY) > 0.5f)
             {
-                ground[wall] = true;
+                ground.Add(wall);
             }
             else if (Vector2.Dot(normal, Vector2.UnitY) > 0.5f)
             {
@@ -212,7 +212,7 @@ namespace Swing.Components
 
         public void OnLeaveWall(Fixture sender, Fixture wall, Contact contact)
         {
-            if (ground.ContainsKey(wall))
+            if (ground.Contains(wall))
                 ground.Remove(wall);
 
             if (Debug.DISPLAY_PLAYER_TOUCHING_COLLIDERS)
