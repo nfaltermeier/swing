@@ -6,4 +6,6 @@ Engine/FrameCounter.cs - FrameCounter code by craftworkgames from https://stacko
 
 Engine/StateManagement - State Management code is by Nathan Bean and is modified by me.
 
+Content/Scroller.fx - Texture scrolling code is by Nick Monaco.
+
 All other assets are made by me.

@@ -41,6 +41,22 @@ namespace Swing.Engine
         }
 
         /// <summary>
+        /// Renders sprites vertically flipped so they appear correctly when rendered with the standard transform.
+        /// For use with the texture scrolling shader.
+        /// </summary>
+        /// <param name="position">Where to draw the center of the sprite</param>
+        /// <param name="sprite"></param>
+        /// <param name="renderWidth">How wide the sprite should be on screen</param>
+        /// <param name="renderHeigher">How tall the sprite should be on screen</param>
+        /// <param name="depth">1f front, 0f back</param>
+        public static void RenderSprite(Vector2 position, Texture2D sprite, int renderWidth, int renderHeight, float depth)
+        {
+            Rectangle r = new Rectangle(position.ToPoint() - new Point(renderWidth / 2, renderHeight / 2), new Point(renderWidth, renderHeight));
+            MainGame.Instance.ScreenManager.SpriteBatch.Draw(sprite, r, null, Color.White, 0,
+                Vector2.Zero, SpriteEffects.FlipVertically, depth);
+        }
+
+        /// <summary>
         /// Renders sprites vertically flipped so they appear correctly when rendered with the standard transform
         /// </summary>
         /// <param name="position">Where to draw the top left of the sprite</param>

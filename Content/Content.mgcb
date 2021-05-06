@@ -140,6 +140,12 @@
 /processorParam:TextureFormat=Color
 /build:Player.png
 
+#begin Scroller.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Scroller.fx
+
 #begin Tilesheet.png
 /importer:TextureImporter
 /processor:TextureProcessor

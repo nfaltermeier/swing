@@ -20,13 +20,14 @@ namespace Swing.Actors
         private Texture2D spritesheet;
         private int sheetTileCountX;
         private int sheetTileCountY;
+        private Effect scrollEffect;
 
         public override RenderType RenderType => RenderType.Custom;
 
         public Booster(Vector2 position, int sideLength, Tiles boosterType, Vector2 direction, string spritesheetName) : base(position)
         {
             this.boosterType = boosterType;
-            this.direction = direction;
+            this.direction = Vector2.Normalize(direction);
             this.spritesheetName = spritesheetName;
             float colliderSize = (sideLength - 2) / MainGame.PhysicsScale;
             Body = MainGame.Instance.World.CreateRectangle(colliderSize, colliderSize, 20, Position / sideLength / MainGame.PhysicsScale);
@@ -44,6 +45,7 @@ namespace Swing.Actors
             spritesheet = content.Load<Texture2D>(spritesheetName);
             sheetTileCountX = spritesheet.Width / 64;
             sheetTileCountY = spritesheet.Height / 64;
+            scrollEffect = content.Load<Effect>("Scroller");
         }
 
         private bool Body_OnCollision(Fixture sender, Fixture other, Contact contact)
@@ -64,9 +66,18 @@ namespace Swing.Actors
         {
             base.Draw();
 
-            Screen.ScreenManager.SpriteBatch.Begin(samplerState: SamplerState.PointClamp, sortMode: SpriteSortMode.FrontToBack, transformMatrix: Screen.GetStandardTransformWithCamera(), rasterizerState: RasterizerState.CullClockwise);
-            RenderSpriteFromSheetCentered(Position, spritesheet, 64, 64,
-                            ((byte)boosterType - 1) % sheetTileCountX, ((byte)boosterType - 1) / sheetTileCountX, 0, RenderOrder.Background);
+            int spriteX = ((byte)boosterType - 1) % sheetTileCountX;
+            int spriteY = ((byte)boosterType - 1) / sheetTileCountX;
+
+            scrollEffect.Parameters["ScrollSpeed"].SetValue(0.25f);
+            scrollEffect.Parameters["ScrollDirection"].SetValue(-direction);
+            scrollEffect.Parameters["Time"].SetValue(Time.RealTotalTime + 10);
+            scrollEffect.Parameters["TilemapDims"].SetValue(new Vector2(sheetTileCountX, sheetTileCountY));
+            scrollEffect.Parameters["TilemapCoords"].SetValue(new Vector2(spriteX, spriteY));
+
+            Screen.ScreenManager.SpriteBatch.Begin(samplerState: SamplerState.PointClamp, sortMode: SpriteSortMode.FrontToBack,
+                transformMatrix: Screen.GetStandardTransformWithCamera(), rasterizerState: RasterizerState.CullClockwise, effect: scrollEffect);
+            RenderSprite(Position, spritesheet, 64, 64, RenderOrder.Background);
             Screen.ScreenManager.SpriteBatch.End();
         }
 
