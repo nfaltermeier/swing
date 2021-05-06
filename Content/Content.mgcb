@@ -97,6 +97,9 @@
 #begin Levels/1.tmx
 /copy:Levels/1.tmx
 
+#begin Levels/10.tmx
+/copy:Levels/10.tmx
+
 #begin Levels/2.tmx
 /copy:Levels/2.tmx
 
