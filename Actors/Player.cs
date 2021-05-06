@@ -67,6 +67,34 @@ namespace Swing.Actors
                     if (controller != null && !controller.IsDestroyed)
                         ret = controller.OnTouchWall(sender, other, contact);
                 }
+                else if (tag == ColliderTags.LeftBooster)
+                {
+                    if (controller != null && !controller.IsDestroyed)
+                    {
+                        this.Body.ApplyForce(Vector2.UnitX * -50 * this.Body.Mass * MainGame.PhysicsScale);
+                    }
+                }
+                else if (tag == ColliderTags.RightBooster)
+                {
+                    if (controller != null && !controller.IsDestroyed)
+                    {
+                        this.Body.ApplyForce(Vector2.UnitX * 50 * this.Body.Mass * MainGame.PhysicsScale);
+                    }
+                }
+                else if (tag == ColliderTags.UpBooster)
+                {
+                    if (controller != null && !controller.IsDestroyed)
+                    {
+                        this.Body.ApplyForce(Vector2.UnitY * 50 * this.Body.Mass * MainGame.PhysicsScale);
+                    }
+                }
+                else if (tag == ColliderTags.DownBooster)
+                {
+                    if (controller != null && !controller.IsDestroyed)
+                    {
+                        this.Body.ApplyForce(Vector2.UnitY * -50 * this.Body.Mass * MainGame.PhysicsScale);
+                    }
+                }
 
             }
 

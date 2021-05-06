@@ -22,5 +22,9 @@ namespace Swing
         Player,
         Spike,
         Goal,
+        LeftBooster,
+        RightBooster,
+        UpBooster,
+        DownBooster,
     }
 }
