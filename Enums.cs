@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Swing
 {
-    enum Tiles
+    public enum Tiles
     {
         Nothing = 0,
         Wall = 1,

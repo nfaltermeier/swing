@@ -52,8 +52,7 @@ namespace Swing.Engine.Actors
                 for (int y = 0; y < tilemap.GetLength(1); y++)
                 {
                     if (tilemap[x, y] == (byte)Tiles.Wall || tilemap[x, y] == (byte)Tiles.UpSpike || tilemap[x, y] == (byte)Tiles.DownSpike ||
-                         tilemap[x, y] == (byte)Tiles.LeftSpike || tilemap[x, y] == (byte)Tiles.RightSpike || tilemap[x, y] == (byte)Tiles.RightBooster ||
-                          tilemap[x, y] == (byte)Tiles.DownBooster || tilemap[x, y] == (byte)Tiles.LeftBooster || tilemap[x, y] == (byte)Tiles.UpBooster)
+                         tilemap[x, y] == (byte)Tiles.LeftSpike || tilemap[x, y] == (byte)Tiles.RightSpike)
                     {
                         Body b = MainGame.Instance.World.CreateRectangle(colliderSize, colliderSize, 20, GetCenterOfTile(x, y) / MainGame.PhysicsScale);
                         foreach (Fixture f in b.FixtureList)
@@ -68,22 +67,6 @@ namespace Swing.Engine.Actors
                                 case (byte)Tiles.LeftSpike:
                                 case (byte)Tiles.RightSpike:
                                     f.Tag = ColliderTags.Spike;
-                                    break;
-                                case (byte)Tiles.RightBooster:
-                                    f.Tag = ColliderTags.RightBooster;
-                                    f.IsSensor = true;
-                                    break;
-                                case (byte)Tiles.DownBooster:
-                                    f.Tag = ColliderTags.DownBooster;
-                                    f.IsSensor = true;
-                                    break;
-                                case (byte)Tiles.LeftBooster:
-                                    f.Tag = ColliderTags.LeftBooster;
-                                    f.IsSensor = true;
-                                    break;
-                                case (byte)Tiles.UpBooster:
-                                    f.Tag = ColliderTags.UpBooster;
-                                    f.IsSensor = true;
                                     break;
                             }
                         }
@@ -111,7 +94,9 @@ namespace Swing.Engine.Actors
             {
                 for (int y = 0; y < tilemap.GetLength(1); y++)
                 {
-                    if (tilemap[x,y] != 0)
+                    if (tilemap[x,y] != 0 && tilemap[x,y] != (byte)Tiles.DownBooster 
+                        && tilemap[x, y] != (byte)Tiles.UpBooster && tilemap[x, y] != (byte)Tiles.LeftBooster
+                        && tilemap[x, y] != (byte)Tiles.RightBooster)
                     {
                         RenderSpriteFromSheet(GetPositionOfTile(x, y), spritesheet, tileSize, tileSize,
                             (tilemap[x,y] - 1) % sheetTileCountX, (tilemap[x,y] - 1) / sheetTileCountX, 0, RenderOrder.Background);

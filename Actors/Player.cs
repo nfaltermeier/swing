@@ -67,7 +67,7 @@ namespace Swing.Actors
                     if (controller != null && !controller.IsDestroyed)
                         ret = controller.OnTouchWall(sender, other, contact);
                 }
-                else if (tag == ColliderTags.LeftBooster)
+                /*else if (tag == ColliderTags.LeftBooster)
                 {
                     if (controller != null && !controller.IsDestroyed)
                     {
@@ -94,7 +94,7 @@ namespace Swing.Actors
                     {
                         this.Body.ApplyForce(Vector2.UnitY * -500 * this.Body.Mass * MainGame.PhysicsScale);
                     }
-                }
+                }*/
 
             }
 

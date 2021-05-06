@@ -26,7 +26,9 @@ namespace Swing.Screens
         public MainGameScreen(int level)
         {
             this.Level = level;
-            TMXParser.ParseData data = TMXParser.ParseTilemap(GetLevelPath(level), (b => b == (byte)Tiles.Goal || b == (byte)Tiles.PlayerSpawn), TileSize);
+            TMXParser.ParseData data = TMXParser.ParseTilemap(GetLevelPath(level), 
+                (b => b == (byte)Tiles.Goal || b == (byte)Tiles.PlayerSpawn || b == (byte)Tiles.DownBooster || b == (byte)Tiles.UpBooster || b == (byte)Tiles.LeftBooster || b == (byte)Tiles.RightBooster), 
+                TileSize);
             int levelWidth = data.width;
             int levelHeight = data.height == 1088 ? 1080 : data.height;
 
@@ -57,6 +59,18 @@ namespace Swing.Screens
                         break;
                     case (byte)Tiles.PlayerSpawn:
                         playerPosition = renderer.GetCenterOfTile(p.X, p.Y);
+                        break;
+                    case (byte)Tiles.DownBooster:
+                        Instantiate(new Booster(renderer.GetCenterOfTile(p.X, p.Y), TileSize, Tiles.DownBooster, -Vector2.UnitY, "Tilesheet"));
+                        break;
+                    case (byte)Tiles.UpBooster:
+                        Instantiate(new Booster(renderer.GetCenterOfTile(p.X, p.Y), TileSize, Tiles.UpBooster, Vector2.UnitY, "Tilesheet"));
+                        break;
+                    case (byte)Tiles.LeftBooster:
+                        Instantiate(new Booster(renderer.GetCenterOfTile(p.X, p.Y), TileSize, Tiles.LeftBooster, -Vector2.UnitX, "Tilesheet"));
+                        break;
+                    case (byte)Tiles.RightBooster:
+                        Instantiate(new Booster(renderer.GetCenterOfTile(p.X, p.Y), TileSize, Tiles.RightBooster, Vector2.UnitX, "Tilesheet"));
                         break;
                 }
             }
