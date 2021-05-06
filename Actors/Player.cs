@@ -20,6 +20,8 @@ namespace Swing.Actors
 
         private PlayerController controller;
 
+        public static HashSet<Tiles> IsBoostingDirections;
+
         private LandingParticleSystem landingParticleSystem;
 
         private PlayerSpawnParticleSystem playerSpawnParticleSystem;
@@ -34,6 +36,7 @@ namespace Swing.Actors
             Body.OnCollision += Body_OnCollision;
             Body.OnSeparation += Body_OnSeparation;
             Body.LinearDamping = .5f;
+            IsBoostingDirections = new HashSet<Tiles>();
             foreach (Fixture f in Body.FixtureList)
             {
                 f.Tag = ColliderTags.Player;
@@ -137,6 +140,12 @@ namespace Swing.Actors
             isAlive = true;
             // Store the last direction so the sprite is correct when the game is paused
             lastInput = InputManager.Direction;
+        }
+
+        protected override void FixedUpdate()
+        {
+            base.FixedUpdate();
+            IsBoostingDirections.Clear(); 
         }
 
         protected override void LoadContent(ContentManager content)

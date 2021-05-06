@@ -50,9 +50,10 @@ namespace Swing.Actors
         {
             if (other.Tag is ColliderTags tag)
             {
-                if (tag == ColliderTags.Player)
+                if (tag == ColliderTags.Player && !Player.IsBoostingDirections.Contains(boosterType))
                 {
                     other.Body.ApplyForce(direction * 500 * other.Body.Mass * MainGame.PhysicsScale);
+                    Player.IsBoostingDirections.Add(boosterType);
                 }
             }
 
