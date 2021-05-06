@@ -53,7 +53,7 @@ namespace Swing
 
         protected override void Initialize()
         {
-            World = new World(Vector2.UnitY * -5 * PhysicsScale);
+            World = new World(Vector2.UnitY * -10 * PhysicsScale);
             DebugView = new DebugView(World);
             DebugView.DefaultShapeColor = Color.White;
             DebugView.SleepingShapeColor = Color.LightGray;

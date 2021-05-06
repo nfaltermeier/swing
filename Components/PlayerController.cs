@@ -13,7 +13,7 @@ namespace Swing.Components
 {
     class PlayerController : Component
     {
-        public float Acceleration { get; set; } = 3 * MainGame.PhysicsScale;
+        public float Acceleration { get; set; } = 4 * MainGame.PhysicsScale;
         public float JumpHangTime { get; set; } = 0.3f;
         public int CoyoteFrames { get; set; } = 4;
         public int FixedUpdateJumpCooldown { get; set; } = 3;
@@ -99,7 +99,7 @@ namespace Swing.Components
                     framesSinceGrounded = CoyoteFrames + 1;
                     jumpCooldown = FixedUpdateJumpCooldown;
                     timeSinceJump = 0;
-                    bAttached.Body.ApplyForce(Vector2.UnitY * 160 * bAttached.Body.Mass * MainGame.PhysicsScale);
+                    bAttached.Body.ApplyForce(Vector2.UnitY * 240 * bAttached.Body.Mass * MainGame.PhysicsScale);
                     jumpSound.Play(0.7f, 0, 0);
                 }
                 //bAttached.Body.ApplyForce(Vector2.UnitY * 22 * bAttached.Body.Mass * (MathF.Max(JumpHangTime - timeSinceJump, 0f) / JumpHangTime) * MainGame.PhysicsScale);
@@ -125,7 +125,7 @@ namespace Swing.Components
             timeSinceJump += Time.DeltaTime;
             if (InputManager.Jump && framesSinceGrounded > CoyoteFrames && timeSinceJump <= JumpHangTime)
             {
-                bAttached.Body.ApplyForce(Vector2.UnitY * 11 * bAttached.Body.Mass * MainGame.PhysicsScale);
+                bAttached.Body.ApplyForce(Vector2.UnitY * 14 * bAttached.Body.Mass * MainGame.PhysicsScale);
             }
 
             if (swingPoint is Vector2 sp)
