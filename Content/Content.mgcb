@@ -112,6 +112,15 @@
 #begin Levels/6.tmx
 /copy:Levels/6.tmx
 
+#begin Levels/7.tmx
+/copy:Levels/7.tmx
+
+#begin Levels/8.tmx
+/copy:Levels/8.tmx
+
+#begin Levels/9.tmx
+/copy:Levels/9.tmx
+
 #begin MediumFont.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
