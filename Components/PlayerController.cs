@@ -16,6 +16,7 @@ namespace Swing.Components
         public float Acceleration { get; set; } = 4 * MainGame.PhysicsScale;
         public float JumpHangTime { get; set; } = 0.3f;
         public int CoyoteFrames { get; set; } = 4;
+        public int JumpBufferFrames { get; set; } = 4;
         public int FixedUpdateJumpCooldown { get; set; } = 3;
 
         BodiedActor bAttached;
@@ -26,6 +27,7 @@ namespace Swing.Components
         private float timeSinceJump;
         private int framesSinceGrounded;
         private int jumpCooldown;
+        private int framesSinceJumpInput;
 
         private SoundEffect jumpSound;
         private SoundEffectInstance runSound;
@@ -42,6 +44,7 @@ namespace Swing.Components
             timeSinceJump = 0;
             swingPoint = null;
             previousGroundCount = ground.Count;
+            framesSinceJumpInput = JumpBufferFrames + 1;
         }
 
         internal override void LoadContent(ContentManager content)
@@ -92,17 +95,19 @@ namespace Swing.Components
                 }
             }*/
 
-            if (InputManager.Jump)
+            framesSinceJumpInput++;
+            if (InputManager.Jump && !InputManager.JumpHeld)
             {
-                if (framesSinceGrounded <= CoyoteFrames)
-                {
-                    framesSinceGrounded = CoyoteFrames + 1;
-                    jumpCooldown = FixedUpdateJumpCooldown;
-                    timeSinceJump = 0;
-                    bAttached.Body.ApplyForce(Vector2.UnitY * 240 * bAttached.Body.Mass * MainGame.PhysicsScale);
-                    jumpSound.Play(0.7f, 0, 0);
-                }
-                //bAttached.Body.ApplyForce(Vector2.UnitY * 22 * bAttached.Body.Mass * (MathF.Max(JumpHangTime - timeSinceJump, 0f) / JumpHangTime) * MainGame.PhysicsScale);
+                framesSinceJumpInput = 0;
+            }
+
+            if (framesSinceGrounded <= CoyoteFrames && framesSinceJumpInput <= JumpBufferFrames)
+            {
+                framesSinceGrounded = CoyoteFrames + 1;
+                jumpCooldown = FixedUpdateJumpCooldown;
+                timeSinceJump = 0;
+                bAttached.Body.ApplyForce(Vector2.UnitY * 240 * bAttached.Body.Mass * MainGame.PhysicsScale);
+                jumpSound.Play(0.7f, 0, 0);
             }
         }
 

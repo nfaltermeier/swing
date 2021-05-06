@@ -20,6 +20,7 @@ namespace Swing
         public static bool MouseReleased { get; private set; }
         public static bool MouseHeld { get; private set; }
         public static bool Jump { get; private set; }
+        public static bool JumpHeld { get; private set; }
 
         private static KeyboardState currentKeyboardState;
         private static KeyboardState previousKeyboardState;
@@ -107,8 +108,13 @@ namespace Swing
             #endregion
 
             #region Jump
+            bool lastJump = Jump;
             Jump = (currentGamePadState.Buttons.A == ButtonState.Pressed) ||
                 (currentKeyboardState.IsKeyDown(Keys.Space));
+            #endregion
+
+            #region JumpHeld
+            JumpHeld = lastJump && Jump;
             #endregion
         }
     }
