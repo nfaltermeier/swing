@@ -14,6 +14,10 @@ namespace Swing
         RightSpike = 5,
         LeftSpike = 6,
         DownSpike = 7,
+        RightBooster = 9,
+        DownBooster = 10,
+        LeftBooster = 11,
+        UpBooster = 12,
     }
 
     enum ColliderTags
