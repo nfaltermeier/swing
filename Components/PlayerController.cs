@@ -55,7 +55,7 @@ namespace Swing.Components
         {
             base.Update();
 
-            if (bAttached.Body.LinearVelocity.LengthSquared() > 0 && ground.Count > 0)
+            if (Time.TimeScale != 0 && bAttached.Body.LinearVelocity.LengthSquared() > 0 && ground.Count > 0)
             {
                 if (runSound.State != SoundState.Playing)
                     runSound.Play();

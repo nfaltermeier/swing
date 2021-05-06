@@ -109,6 +109,9 @@
 #begin Levels/5.tmx
 /copy:Levels/5.tmx
 
+#begin Levels/6.tmx
+/copy:Levels/6.tmx
+
 #begin MediumFont.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor

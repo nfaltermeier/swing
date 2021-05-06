@@ -37,9 +37,9 @@ namespace Swing.Engine.Actors
             this.spritesheetName = spritesheetName;
             this.tileSize = tileSize;
             topLeftOffset = new Vector2(-tilemap.GetLength(0) * tileSize / 2f, tilemap.GetLength(1) * tileSize / 2f);
-            Vector2 left = GetPositionOfTile(0, 0);
+            /*Vector2 left = GetPositionOfTile(0, 0);
             Vector2 right = GetPositionOfTile(tilemap.GetLength(0) - 1, tilemap.GetLength(1) - 1) + new Vector2(tileSize, -tileSize);
-            Debug.LogClean($"x: {left.X}, y: {left.Y}, x: {right.X}, y: {right.Y}");
+            Debug.LogClean($"x: {left.X}, y: {left.Y}, x: {right.X}, y: {right.Y}");*/
         }
 
         protected override void Start()
@@ -54,7 +54,9 @@ namespace Swing.Engine.Actors
                     if (tilemap[x, y] == (byte)Tiles.Wall || tilemap[x, y] == (byte)Tiles.UpSpike || tilemap[x, y] == (byte)Tiles.DownSpike ||
                          tilemap[x, y] == (byte)Tiles.LeftSpike || tilemap[x, y] == (byte)Tiles.RightSpike)
                     {
-                        Body b = MainGame.Instance.World.CreateRectangle(colliderSize, colliderSize, 20, GetCenterOfTile(x, y) / MainGame.PhysicsScale);
+                        // make spikes slightly smaller than a wall so players partially on a wall above one don't touch it
+                        float realColliderSize = tilemap[x, y] == (byte)Tiles.Wall ? colliderSize : colliderSize - (2 / MainGame.PhysicsScale);
+                        Body b = MainGame.Instance.World.CreateRectangle(realColliderSize, realColliderSize, 20, GetCenterOfTile(x, y) / MainGame.PhysicsScale);
                         foreach (Fixture f in b.FixtureList)
                         {
                             switch (tilemap[x, y])

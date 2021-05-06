@@ -28,8 +28,8 @@ namespace Swing.Actors
             this.boosterType = boosterType;
             this.direction = direction;
             this.spritesheetName = spritesheetName;
-            Body = MainGame.Instance.World.CreateRectangle(sideLength / (MainGame.PhysicsScale * 2),
-                sideLength / (MainGame.PhysicsScale * 2), 20, Position / sideLength / MainGame.PhysicsScale);
+            float colliderSize = (sideLength - 2) / MainGame.PhysicsScale;
+            Body = MainGame.Instance.World.CreateRectangle(colliderSize, colliderSize, 20, Position / sideLength / MainGame.PhysicsScale);
             Body.OnCollision += Body_OnCollision;
             foreach (Fixture f in Body.FixtureList)
             {
