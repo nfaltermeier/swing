@@ -54,6 +54,13 @@ namespace Swing.Actors
             {
                 if (tag == ColliderTags.Player && !Player.IsBoostingDirections.Contains(boosterType))
                 {
+                    Vector2 normVel = other.Body.LinearVelocity;
+                    normVel.Normalize();
+                    // Helps prevent clipping through a booster by moving too fast the opposite direction
+                    if (Vector2.Dot(direction, normVel) < -0.4f)
+                    {
+                        other.Body.LinearVelocity = other.Body.LinearVelocity / 2;
+                    }
                     other.Body.ApplyForce(direction * 500 * other.Body.Mass * MainGame.PhysicsScale);
                     Player.IsBoostingDirections.Add(boosterType);
                 }
