@@ -70,8 +70,7 @@ namespace Swing.Components
             }
 
             Vector2 instantVel = InputManager.Direction * Acceleration * Time.DeltaTime;
-            if (instantVel.Y > 0)
-                instantVel.Y = 0;
+            instantVel.Y = 0;
 
             // Make stopping faster
             if (Vector2.Dot(Vector2.Normalize(instantVel), Vector2.Normalize(bAttached.Body.LinearVelocity)) < 0.25f)
