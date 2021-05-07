@@ -52,7 +52,8 @@ namespace Swing.Engine.Actors
                 for (int y = 0; y < tilemap.GetLength(1); y++)
                 {
                     if (tilemap[x, y] == (byte)Tiles.Wall || tilemap[x, y] == (byte)Tiles.UpSpike || tilemap[x, y] == (byte)Tiles.DownSpike ||
-                         tilemap[x, y] == (byte)Tiles.LeftSpike || tilemap[x, y] == (byte)Tiles.RightSpike)
+                         tilemap[x, y] == (byte)Tiles.LeftSpike || tilemap[x, y] == (byte)Tiles.RightSpike || tilemap[x, y] == (byte)Tiles.UpRightSpike ||
+                          tilemap[x, y] == (byte)Tiles.UpLeftSpike || tilemap[x, y] == (byte)Tiles.LeftUpRightSpike)
                     {
                         // make spikes slightly smaller than a wall so players partially on a wall above one don't touch it
                         float realColliderSize = tilemap[x, y] == (byte)Tiles.Wall ? colliderSize : colliderSize - (2 / MainGame.PhysicsScale);
@@ -68,6 +69,9 @@ namespace Swing.Engine.Actors
                                 case (byte)Tiles.DownSpike:
                                 case (byte)Tiles.LeftSpike:
                                 case (byte)Tiles.RightSpike:
+                                case (byte)Tiles.UpRightSpike:
+                                case (byte)Tiles.UpLeftSpike:
+                                case (byte)Tiles.LeftUpRightSpike:
                                     f.Tag = ColliderTags.Spike;
                                     break;
                             }

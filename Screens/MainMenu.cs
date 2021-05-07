@@ -33,7 +33,7 @@ namespace Swing.Screens
 
         private void Play_Activated()
         {
-            ScreenManager.QueueAddScreen(new MainGameScreen(10));
+            ScreenManager.QueueAddScreen(new MainGameScreen(1));
             ExitScreen();
         }
     }
